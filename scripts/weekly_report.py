@@ -22,6 +22,12 @@ from typing import Any
 
 import requests
 
+# Ensure project root is on sys.path when executed as a script (python scripts/weekly_report.py)
+_THIS_DIR = os.path.dirname(__file__)
+_PROJ_ROOT = os.path.dirname(_THIS_DIR)
+if _PROJ_ROOT not in sys.path:
+    sys.path.insert(0, _PROJ_ROOT)
+
 # Try to import project modules; if run as `python scripts/weekly_report.py`,
 # fall back to inserting the project root into sys.path and retry.
 try:  # E402: keep imports at top; handle path fix within except
@@ -32,8 +38,18 @@ try:  # E402: keep imports at top; handle path fix within except
         SHOOTOUT_COMBINED,
         SLUGFEST_COMBINED,
         CLOSE_GAME_MARGIN,
+        WIN_PCT_PLACES,
+        POINTS_PLACES,
+        DEFAULT_MIN_INTERVAL_SEC,
     )
     from scripts.lib.client import SleeperClient
+    from scripts.lib.compute import (
+        group_rows as _compute_group_rows,
+        compute_standings_with_groups as _compute_standings_with_groups_lib,
+        compute_weekly_results as _compute_weekly_results_lib,
+        current_streak as _compute_current_streak,
+        longest_streaks as _compute_longest_streaks,
+    )
 except ModuleNotFoundError:  # pragma: no cover - environment-specific
     _THIS_DIR = os.path.dirname(__file__)
     _PROJ_ROOT = os.path.dirname(_THIS_DIR)
@@ -46,8 +62,18 @@ except ModuleNotFoundError:  # pragma: no cover - environment-specific
         SHOOTOUT_COMBINED,
         SLUGFEST_COMBINED,
         CLOSE_GAME_MARGIN,
+        WIN_PCT_PLACES,
+        POINTS_PLACES,
+        DEFAULT_MIN_INTERVAL_SEC,
     )
     from scripts.lib.client import SleeperClient
+    from scripts.lib.compute import (
+        group_rows as _compute_group_rows,
+        compute_standings_with_groups as _compute_standings_with_groups_lib,
+        compute_weekly_results as _compute_weekly_results_lib,
+        current_streak as _compute_current_streak,
+        longest_streaks as _compute_longest_streaks,
+    )
 
 BASE_URL = os.environ.get("SLEEPER_BASE_URL", "https://api.sleeper.com/v1")
 LEAGUE_ID = os.environ.get("SLEEPER_LEAGUE_ID", "1180276953741729792")
@@ -104,7 +130,7 @@ if rpm and rpm > 0:
 if min_ms and min_ms > 0:
     _MIN_INTERVAL_SEC = max(_MIN_INTERVAL_SEC, min_ms / 1000.0)
 if _MIN_INTERVAL_SEC <= 0:
-    _MIN_INTERVAL_SEC = 0.10  # default ~600 rpm
+    _MIN_INTERVAL_SEC = DEFAULT_MIN_INTERVAL_SEC  # default ~600 rpm
 
 _last_call_ts = 0.0
 
@@ -175,17 +201,21 @@ def _build_name_maps(users: list[dict], rosters: list[dict]) -> tuple[dict, dict
 
 
 def _compute_standings(league_id: str, start_week: int, end_week: int) -> list[dict]:
-    return _compute_standings_with_groups(league_id, start_week, end_week, None)
+    """Compute standings by fetching matchups on-demand for the given range.
+
+    This wrapper preserves the legacy signature and delegates to the shared
+    compute library after building the minimal weekly_groups structure.
+    """
+    weekly_groups: dict[int, dict[int, list[dict]]] = {}
+    for wk in range(start_week, max(start_week, end_week) + 1):
+        rows = _get(f"{BASE_URL}/league/{league_id}/matchups/{wk}").json()
+        weekly_groups[wk] = _compute_group_rows(rows)
+    return _compute_standings_with_groups_lib(weekly_groups, start_week, end_week)
 
 
 def _group_rows(rows: list[dict]) -> dict[int, list[dict]]:
-    groups: dict[int, list[dict]] = {}
-    for row in rows or []:
-        mid = row.get("matchup_id")
-        if mid is None:
-            mid = -100000 - row.get("roster_id", 0)
-        groups.setdefault(mid, []).append(row)
-    return groups
+    """Delegate to shared group_rows helper (behavior identical)."""
+    return _compute_group_rows(rows)
 
 
 def _fetch_weekly_groups(
@@ -194,7 +224,7 @@ def _fetch_weekly_groups(
     weeks: dict[int, dict[int, list[dict]]] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         rows = _get(f"{BASE_URL}/league/{league_id}/matchups/{wk}").json()
-        weeks[wk] = _group_rows(rows)
+    weeks[wk] = _compute_group_rows(rows)
     return weeks
 
 
@@ -204,82 +234,19 @@ def _compute_standings_with_groups(
     end_week: int,
     weekly_groups: dict[int, dict[int, list[dict]]] | None,
 ) -> list[dict]:
-    records: dict[int, dict] = {}
-    for wk in range(start_week, max(start_week, end_week) + 1):
-        if weekly_groups is None:
+    """Delegate to shared standings computation; fetch weeks if groups absent."""
+    if weekly_groups is None:
+        built: dict[int, dict[int, list[dict]]] = {}
+        for wk in range(start_week, max(start_week, end_week) + 1):
             rows = _get(f"{BASE_URL}/league/{league_id}/matchups/{wk}").json()
-            groups = _group_rows(rows)
-        else:
-            groups = weekly_groups.get(wk, {})
-
-        for _, entries in (groups or {}).items():
-            if len(entries) == 2:
-                a, b = entries[0], entries[1]
-                for e in (a, b):
-                    rid = e.get("roster_id")
-                    rec = records.setdefault(
-                        rid,
-                        {
-                            "roster_id": rid,
-                            "wins": 0,
-                            "losses": 0,
-                            "ties": 0,
-                            "points_for": 0.0,
-                            "points_against": 0.0,
-                        },
-                    )
-                    opp = b if e is a else a
-                    rec["points_for"] += float(e.get("points", 0) or 0)
-                    rec["points_against"] += float(opp.get("points", 0) or 0)
-                ap = float(a.get("points", 0) or 0)
-                bp = float(b.get("points", 0) or 0)
-                if ap > bp:
-                    records[a.get("roster_id")]["wins"] += 1
-                    records[b.get("roster_id")]["losses"] += 1
-                elif bp > ap:
-                    records[b.get("roster_id")]["wins"] += 1
-                    records[a.get("roster_id")]["losses"] += 1
-                else:
-                    records[a.get("roster_id")]["ties"] += 1
-                    records[b.get("roster_id")]["ties"] += 1
-            else:
-                total_points = [float(e.get("points", 0) or 0) for e in entries]
-                for i, e in enumerate(entries):
-                    rid = e.get("roster_id")
-                    rec = records.setdefault(
-                        rid,
-                        {
-                            "roster_id": rid,
-                            "wins": 0,
-                            "losses": 0,
-                            "ties": 0,
-                            "points_for": 0.0,
-                            "points_against": 0.0,
-                        },
-                    )
-                    rec["points_for"] += total_points[i]
-                    rec["points_against"] += sum(total_points) - total_points[i]
-
-    table = []
-    for rid, rec in records.items():
-        g = rec["wins"] + rec["losses"] + rec["ties"]
-        win_pct = (rec["wins"] + 0.5 * rec["ties"]) / g if g else 0.0
-        table.append(
-            {
-                **rec,
-                "games": g,
-                "win_pct": round(win_pct, 4),
-                "points_for": round(rec["points_for"], 2),
-                "points_against": round(rec["points_against"], 2),
-            }
-        )
-    table.sort(key=lambda r: (-r["win_pct"], -r["points_for"], r["roster_id"]))
-    return table
+            built[wk] = _compute_group_rows(rows)
+        weekly_groups = built
+    return _compute_standings_with_groups_lib(weekly_groups, start_week, end_week)
 
 
 def _head_to_head_week(league_id: str, week: int, roster_owner_name: dict[int, str]) -> list[dict]:
     rows = _get(f"{BASE_URL}/league/{league_id}/matchups/{week}").json()
-    groups = _group_rows(rows)
+    groups = _compute_group_rows(rows)
 
     results: list[dict] = []
     for mid, entries in groups.items():
@@ -374,104 +341,28 @@ def _compute_weekly_results(
     end_week: int,
     weekly_groups: dict[int, dict[int, list[dict]]] | None = None,
 ) -> dict[int, list[tuple[int, str]]]:
-    """Return per-roster list of (week, result) where result in {'W','L','T'}.
-    Only considers standard two-team matchups; multi-team matchups will be ignored for W/L/T purposes.
-    """
-    results: dict[int, list[tuple[int, str]]] = {}
-    for wk in range(start_week, max(start_week, end_week) + 1):
-        if weekly_groups is None:
+    """Thin wrapper that delegates to shared compute_weekly_results."""
+    if weekly_groups is None:
+        built: dict[int, dict[int, list[dict]]] = {}
+        for wk in range(start_week, max(start_week, end_week) + 1):
             rows = _get(f"{BASE_URL}/league/{league_id}/matchups/{wk}").json()
-            groups = _group_rows(rows)
-        else:
-            groups = weekly_groups.get(wk, {})
-        for _, entries in (groups or {}).items():
-            if len(entries) != 2:
-                continue
-            a, b = entries
-            ap = float(a.get("points", 0) or 0)
-            bp = float(b.get("points", 0) or 0)
-            if ap > bp:
-                results.setdefault(a.get("roster_id"), []).append((wk, "W"))
-                results.setdefault(b.get("roster_id"), []).append((wk, "L"))
-            elif bp > ap:
-                results.setdefault(b.get("roster_id"), []).append((wk, "W"))
-                results.setdefault(a.get("roster_id"), []).append((wk, "L"))
-            else:
-                results.setdefault(a.get("roster_id"), []).append((wk, "T"))
-                results.setdefault(b.get("roster_id"), []).append((wk, "T"))
-    # ensure roster keys exist even if empty
-    return results
+            built[wk] = _compute_group_rows(rows)
+        weekly_groups = built
+    return _compute_weekly_results_lib(weekly_groups, start_week, end_week)
 
 
 def _current_streak(
     res_list: list[tuple[int, str]], through_week: int
 ) -> tuple[str, int, int, int]:
-    """Compute current streak as of through_week.
-    Returns (type, length, start_week, end_week). type in {'W','L','none'}; ties break streaks.
-    """
-    filtered = [t for t in res_list if t[0] <= through_week]
-    if not filtered:
-        return ("none", 0, 0, through_week)
-    # Walk backward until change or tie
-    streak_type: str = "none"
-    length = 0
-    start_wk = through_week
-    for week, res in reversed(filtered):
-        if res == "T":
-            break
-        if streak_type == "none":
-            streak_type = res
-            length = 1
-            start_wk = week
-        elif res == streak_type:
-            length += 1
-            start_wk = week
-        else:
-            break
-    if streak_type == "none":
-        return ("none", 0, 0, through_week)
-    return (streak_type, length, start_wk, through_week)
+    """Delegate to shared current_streak helper."""
+    return _compute_current_streak(res_list, through_week)
 
 
 def _longest_streaks(
     res_list: list[tuple[int, str]], through_week: int
 ) -> tuple[tuple[int, str], tuple[int, str]]:
-    """Compute longest win and loss streak lengths (and week span string) up to through_week.
-    Returns ((win_len, win_span), (loss_len, loss_span)), where span like 'w2-w5' or '-' if none.
-    """
-    filtered = [t for t in res_list if t[0] <= through_week]
-    best_win = (0, "-")
-    best_loss = (0, "-")
-    cur_type = None
-    cur_len = 0
-    cur_start = None
-    for week, res in filtered:
-        if res == "T":
-            # finalize current
-            if cur_type == "W" and cur_len > best_win[0]:
-                best_win = (cur_len, f"w{cur_start}-w{week}")
-            if cur_type == "L" and cur_len > best_loss[0]:
-                best_loss = (cur_len, f"w{cur_start}-w{week}")
-            cur_type, cur_len, cur_start = None, 0, None
-            continue
-        if res == cur_type:
-            cur_len += 1
-        else:
-            # finalize previous
-            if cur_type == "W" and cur_len > best_win[0]:
-                best_win = (cur_len, f"w{cur_start}-w{week}")
-            if cur_type == "L" and cur_len > best_loss[0]:
-                best_loss = (cur_len, f"w{cur_start}-w{week}")
-            cur_type = res
-            cur_len = 1
-            cur_start = week
-    # finalize tail
-    if cur_type == "W" and cur_len > best_win[0]:
-        # end at through_week if still ongoing
-        best_win = (cur_len, f"w{cur_start}-w{through_week}")
-    if cur_type == "L" and cur_len > best_loss[0]:
-        best_loss = (cur_len, f"w{cur_start}-w{through_week}")
-    return best_win, best_loss
+    """Delegate to shared longest_streaks helper."""
+    return _compute_longest_streaks(res_list, through_week)
 
 
 def _atomic_write(path: str, content: str) -> None:
@@ -500,6 +391,34 @@ def generate_weekly_history_report(
     verbose: bool = False,
     dry_run: bool = False,
 ) -> dict:
+    """Build a deterministic weekly Markdown report and write it to disk.
+
+    Args:
+        league_id: Sleeper league id; can be the current season or any season anchor.
+        season: Target season (e.g., "2024"); if None, uses the resolved league season.
+        report_week: Week number to report; defaults to last completed regular-season week.
+        sport: Sleeper sport key (default "nfl").
+        out_dir: Base output directory (reports are placed under {out_dir}/{season}).
+        verbose: If True, print destination and sizes.
+        dry_run: If True, compute content but do not write files.
+
+    Returns:
+        A summary dict with path and counts, e.g.:
+        {
+          "written": True,
+          "path": "reports/weekly/2024/week-11.md",
+          "league_id": str,
+          "season": str,
+          "report_week": int,
+          "same_season": bool,
+          "entries": {"standings": int, "head_to_head": int, "preview": int},
+        }
+
+    Side effects:
+        Writes an atomically-updated Markdown file unless dry_run is True. All
+        content is derived solely from Sleeper API data. Output format is
+        stable and suitable for downstream parsing.
+    """
     league = _resolve_league_for_season(league_id, season)
     resolved_league_id = str(league.get("league_id"))
     resolved_season = str(league.get("season"))
@@ -803,9 +722,9 @@ def generate_weekly_history_report(
                 [
                     str(m.get("matchup_id")),
                     f"{a.get('roster_id')} - {a.get('owner')}",
-                    f"{a.get('points'):.2f}",
+                    f"{a.get('points'):.{POINTS_PLACES}f}",
                     f"{b.get('roster_id')} - {b.get('owner')}",
-                    f"{b.get('points'):.2f}",
+                    f"{b.get('points'):.{POINTS_PLACES}f}",
                     str(winner_id or "-"),
                     winner_owner,
                     loser_owner,
@@ -816,7 +735,7 @@ def generate_weekly_history_report(
         else:
             details = (
                 " | ".join(
-                    f"{e.get('roster_id')}:{float(e.get('points',0) or 0):.2f}"
+                    f"{e.get('roster_id')}:{float(e.get('points',0) or 0):.{POINTS_PLACES}f}"
                     for e in m.get("rosters", [])
                 )
                 or "-"
@@ -864,9 +783,9 @@ def generate_weekly_history_report(
                 str(rec.get("wins")),
                 str(rec.get("losses")),
                 str(rec.get("ties")),
-                f"{rec.get('win_pct'):.4f}",
-                f"{rec.get('points_for'):.2f}",
-                f"{rec.get('points_against'):.2f}",
+                f"{rec.get('win_pct'):.{WIN_PCT_PLACES}f}",
+                f"{rec.get('points_for'):.{POINTS_PLACES}f}",
+                f"{rec.get('points_against'):.{POINTS_PLACES}f}",
                 str(rec.get("games")),
                 cur,
                 rank_change,
@@ -977,9 +896,9 @@ def generate_weekly_history_report(
                         str(rec.get("wins")),
                         str(rec.get("losses")),
                         str(rec.get("ties")),
-                        f"{rec.get('win_pct'):.4f}",
-                        f"{rec.get('points_for'):.2f}",
-                        f"{rec.get('points_against'):.2f}",
+                        f"{rec.get('win_pct'):.{WIN_PCT_PLACES}f}",
+                        f"{rec.get('points_for'):.{POINTS_PLACES}f}",
+                        f"{rec.get('points_against'):.{POINTS_PLACES}f}",
                         str(rec.get("games")),
                         cur,
                     ]
@@ -1056,9 +975,9 @@ def generate_weekly_history_report(
                         str(rec.get("wins")),
                         str(rec.get("losses")),
                         str(rec.get("ties")),
-                        f"{rec.get('win_pct'):.4f}",
-                        f"{rec.get('points_for'):.2f}",
-                        f"{rec.get('points_against'):.2f}",
+                        f"{rec.get('win_pct'):.{WIN_PCT_PLACES}f}",
+                        f"{rec.get('points_for'):.{POINTS_PLACES}f}",
+                        f"{rec.get('points_against'):.{POINTS_PLACES}f}",
                         str(rec.get("games")),
                         cur,
                     ]
@@ -1205,7 +1124,7 @@ def generate_weekly_history_report(
         else:
             details = (
                 " | ".join(
-                    f"{e.get('roster_id')}:{float(e.get('points',0) or 0):.2f}"
+                    f"{e.get('roster_id')}:{float(e.get('points',0) or 0):.{POINTS_PLACES}f}"
                     for e in m.get("rosters", [])
                 )
                 or "-"
@@ -1399,12 +1318,12 @@ def generate_weekly_history_report(
         ["playoff_rows", str(playoff_rows)],
         ["streaks_rows", str(streaks_count)],
         ["details_format", "kv;sep=';';kvsep='=';sparse=yes"],
-        ["week_points_avg", f"{week_points_avg:.2f}"],
-        ["week_points_median", f"{week_points_median:.2f}"],
-        ["week_high", f"{week_high:.2f}"],
-        ["week_low", f"{week_low:.2f}"],
-        ["season_high_through_week", f"{season_high_through:.2f}"],
-        ["season_low_through_week", f"{season_low_through:.2f}"],
+    ["week_points_avg", f"{week_points_avg:.{POINTS_PLACES}f}"],
+    ["week_points_median", f"{week_points_median:.{POINTS_PLACES}f}"],
+    ["week_high", f"{week_high:.{POINTS_PLACES}f}"],
+    ["week_low", f"{week_low:.{POINTS_PLACES}f}"],
+    ["season_high_through_week", f"{season_high_through:.{POINTS_PLACES}f}"],
+    ["season_low_through_week", f"{season_low_through:.{POINTS_PLACES}f}"],
     ]
     meta_rows.append(["division_count_configured", str(len(div_names_meta))])
     meta_rows.append(["division_count_active", str(len(active_divisions))])

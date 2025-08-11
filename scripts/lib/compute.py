@@ -1,10 +1,19 @@
-# compute.py
+"""Pure compute helpers used by report generation.
+
+These functions are side-effect free and operate on already-fetched matchup
+data grouped by week, enabling reuse across sections and easier unit testing.
+"""
 from __future__ import annotations
 
 # Pure helpers copied from weekly_report with identical behavior
 
 
 def group_rows(rows: list[dict]) -> dict[int, list[dict]]:
+    """Group raw matchup rows by matchup_id, synthesizing ids when missing.
+
+    When Sleeper rows omit ``matchup_id``, create a per-roster synthetic id to
+    preserve rows without forcing pairing assumptions.
+    """
     groups: dict[int, list[dict]] = {}
     for row in rows or []:
         mid = row.get("matchup_id")
@@ -17,6 +26,7 @@ def group_rows(rows: list[dict]) -> dict[int, list[dict]]:
 def compute_standings_with_groups(
     weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int
 ) -> list[dict]:
+    """Accumulate W/L/T and points for/against for each roster across weeks."""
     records: dict[int, dict] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         groups = weekly_groups.get(wk, {})
@@ -88,6 +98,7 @@ def compute_standings_with_groups(
 def compute_weekly_results(
     weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int
 ) -> dict[int, list[tuple[int, str]]]:
+    """Return per-roster sequences of (week, result) using only two-team matchups."""
     results: dict[int, list[tuple[int, str]]] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         groups = weekly_groups.get(wk, {})
@@ -110,6 +121,7 @@ def compute_weekly_results(
 
 
 def current_streak(res_list: list[tuple[int, str]], through_week: int) -> tuple[str, int, int, int]:
+    """Compute current W/L streak up to a week; ties break streaks."""
     filtered = [t for t in res_list if t[0] <= through_week]
     if not filtered:
         return ("none", 0, 0, through_week)
@@ -136,6 +148,7 @@ def current_streak(res_list: list[tuple[int, str]], through_week: int) -> tuple[
 def longest_streaks(
     res_list: list[tuple[int, str]], through_week: int
 ) -> tuple[tuple[int, str], tuple[int, str]]:
+    """Compute longest win and loss streaks with span labels like 'w2-w5'."""
     filtered = [t for t in res_list if t[0] <= through_week]
     best_win = (0, "-")
     best_loss = (0, "-")
