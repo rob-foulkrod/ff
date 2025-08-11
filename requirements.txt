@@ -1,0 +1,4 @@
+requests
+PyYAML
+pytest
+openapi-spec-validator

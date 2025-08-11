@@ -1,0 +1,30 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.so
+
+# Virtual envs
+.venv/
+.env
+.python-version
+
+# Test & coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+coverage.xml
+
+# Linters & type checkers
+.ruff_cache/
+.mypy_cache/
+
+# IDE/editor
+.vscode/
+.idea/
+.DS_Store
+
+# Project output
+reports/
