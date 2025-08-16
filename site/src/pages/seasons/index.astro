@@ -1,0 +1,757 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+
+// 2024 Season Data from Sleeper screenshots
+const season2024Data = {
+  year: 2024,
+  champion: "CeeDeez Nuts",
+  championOwner: "jfoulkrod",
+  runnerUp: "Chase Brown Tanks",
+  runnerUpOwner: "ebmookie",
+  thirdPlace: "GibbMeDaRock",
+  thirdPlaceOwner: "DbFoulkrod",
+  toiletBowlWinner: "BearDown",
+  toiletBowlOwner: "NOTDada",
+  standings: [
+    // Kids Table 1985
+    { rank: 1, team: "Also too old to run", owner: "robfoulk", wins: 12, losses: 3, pointsFor: 2544.66, division: "Kids Table 1985" },
+    { rank: 2, team: "Chase Brown Tanks", owner: "ebmookie", wins: 10, losses: 5, pointsFor: 2368.66, division: "Kids Table 1985" },
+    { rank: 3, team: "Steel City", owner: "Evenkeel75", wins: 4, losses: 11, pointsFor: 2267.04, division: "Kids Table 1985" },
+    { rank: 4, team: "Hauwk Tua", owner: "asmartaleck1", wins: 3, losses: 12, pointsFor: 2275.42, division: "Kids Table 1985" },
+    // Kids Table 2010
+    { rank: 1, team: "CeeDeez Nuts", owner: "jfoulkrod", wins: 10, losses: 5, pointsFor: 2599.24, division: "Kids Table 2010" },
+    { rank: 2, team: "GibbMeDaRock", owner: "Dbfoulkrod", wins: 10, losses: 5, pointsFor: 2609.62, division: "Kids Table 2010" },
+    { rank: 3, team: "BearDown", owner: "NOTDada", wins: 10, losses: 5, pointsFor: 2537.36, division: "Kids Table 2010" },
+    { rank: 4, team: "Code 3", owner: "mafoulk", wins: 1, losses: 14, pointsFor: 2282.12, division: "Kids Table 2010" }
+  ],
+  highestScore: 2609.62,
+  highestScoreTeam: "GibbMeDaRock",
+  totalWeeks: 15,
+  playoffWeeks: 3
+};
+
+// Create season summaries array with 2024 data
+const seasonSummaries = [season2024Data];
+
+// Calculate dynasty stats based on available data
+const championshipCounts = {
+  "CeeDeez Nuts": 1
+};
+
+const finalsAppearances = {
+  "CeeDeez Nuts": 1,
+  "Also too old to run": 1
+};
+
+const toiletBowlWins = {
+  "BearDown": 1
+};
+
+// Division stats
+const divisionWinners = {
+  "Kids Table 1985": "Also too old to run (12-3)",
+  "Kids Table 2010": "CeeDeez Nuts (10-5)"
+};
+
+// Calculate rivalry record for 2024
+const rivalryRecord2024 = {
+  robfoulk: { wins: 12, losses: 3, madePlayoffs: true, finalPosition: "Runner-Up" },
+  mafoulk: { wins: 1, losses: 14, madePlayoffs: false, finalPosition: "8th Place" }
+};
+
+// Get current champion for special highlighting
+const currentChampion = season2024Data.champion;
+const hasData = seasonSummaries.length > 0;
+---
+
+<BaseLayout title="League History" description="FoulknFootball championship history and dynasty tracker">
+  <!-- Hero Section -->
+  <section class="fff-history-hero">
+    <div class="fff-hero-background"></div>
+    <div class="fff-container">
+      <h1 class="fff-history-title">
+        <span class="fff-title-line">Hall of</span>
+        <span class="fff-title-emphasis">Champions</span>
+      </h1>
+      <p class="fff-history-subtitle">
+        {seasonSummaries.length} Season{seasonSummaries.length !== 1 ? 's' : ''} • {Object.keys(championshipCounts).length} Different Champion{Object.keys(championshipCounts).length !== 1 ? 's' : ''}
+      </p>
+      {currentChampion && (
+        <div class="fff-current-champion-banner">
+          <span class="fff-crown-icon">👑</span>
+          <span>Reigning Champion: <strong>{currentChampion}</strong> ({season2024Data.championOwner})</span>
+        </div>
+      )}
+    </div>
+  </section>
+
+  <!-- 2024 Season Showcase -->
+  <section class="fff-champions-showcase">
+    <div class="fff-container">
+      <h2 class="fff-section-title">2024 Season Results</h2>
+      
+      <!-- Championship Results Grid -->
+      <div class="fff-championship-results">
+        <div class="fff-result-feature champion">
+          <div class="fff-result-icon">🏆</div>
+          <h3>League Champion</h3>
+          <div class="fff-result-team">{season2024Data.champion}</div>
+          <div class="fff-result-owner">@{season2024Data.championOwner}</div>
+          <div class="fff-result-record">10-5 Regular Season</div>
+        </div>
+
+        <div class="fff-result-feature runner-up">
+          <div class="fff-result-icon">🥈</div>
+          <h3>Runner-Up</h3>
+          <div class="fff-result-team">{season2024Data.runnerUp}</div>
+          <div class="fff-result-owner">@{season2024Data.runnerUpOwner}</div>
+          <div class="fff-result-record">12-3 Regular Season</div>
+        </div>
+
+        <div class="fff-result-feature third">
+          <div class="fff-result-icon">🥉</div>
+          <h3>Third Place</h3>
+          <div class="fff-result-team">{season2024Data.thirdPlace}</div>
+          <div class="fff-result-owner">@{season2024Data.thirdPlaceOwner}</div>
+          <div class="fff-result-record">10-5 Regular Season</div>
+        </div>
+
+        <div class="fff-result-feature toilet">
+          <div class="fff-result-icon">🚽</div>
+          <h3>Toilet Bowl Winner</h3>
+          <div class="fff-result-team">{season2024Data.toiletBowlWinner}</div>
+          <div class="fff-result-owner">@{season2024Data.toiletBowlOwner}</div>
+          <div class="fff-result-bonus">🎯 2025 First Overall Pick</div>
+        </div>
+      </div>
+
+      <!-- Division Winners -->
+      <div class="fff-division-winners">
+        <h3 class="fff-subsection-title">Division Winners</h3>
+        <div class="fff-division-grid">
+          <div class="fff-division-card">
+            <h4>Kids Table 1985</h4>
+            <div class="fff-division-winner">Also too old to run</div>
+            <div class="fff-division-record">12-3</div>
+          </div>
+          <div class="fff-division-card">
+            <h4>Kids Table 2010</h4>
+            <div class="fff-division-winner">CeeDeez Nuts</div>
+            <div class="fff-division-record">10-5</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Season Stats -->
+      <div class="fff-season-highlights">
+        <h3 class="fff-subsection-title">Season Highlights</h3>
+        <div class="fff-highlights-grid">
+          <div class="fff-highlight-card">
+            <span class="fff-highlight-label">Regular Season Weeks</span>
+            <span class="fff-highlight-value">15</span>
+          </div>
+          <div class="fff-highlight-card">
+            <span class="fff-highlight-label">Highest Points For</span>
+            <span class="fff-highlight-value">GibbMeDaRock</span>
+            <span class="fff-highlight-detail">2609.62 pts</span>
+          </div>
+          <div class="fff-highlight-card">
+            <span class="fff-highlight-label">Best Record</span>
+            <span class="fff-highlight-value">Also too old to run</span>
+            <span class="fff-highlight-detail">12-3</span>
+          </div>
+          <div class="fff-highlight-card">
+            <span class="fff-highlight-label">Playoff Teams</span>
+            <span class="fff-highlight-value">6</span>
+            <span class="fff-highlight-detail">Top 3 each division</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Full Standings Table -->
+  <section class="fff-standings-section">
+    <div class="fff-container">
+      <h2 class="fff-section-title">2024 Final Standings</h2>
+      
+      <div class="fff-standings-table">
+        <table>
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Team</th>
+              <th>Owner</th>
+              <th>Division</th>
+              <th>Record</th>
+              <th>Points For</th>
+              <th>Playoff Result</th>
+            </tr>
+          </thead>
+          <tbody>
+            {season2024Data.standings.map(team => (
+              <tr class={team.owner === season2024Data.championOwner ? 'champion-row' : ''}>
+                <td>{team.rank}</td>
+                <td class="team-name">{team.team}</td>
+                <td>@{team.owner}</td>
+                <td>{team.division === "Kids Table 1985" ? "1985" : "2010"}</td>
+                <td>{team.wins}-{team.losses}</td>
+                <td>{team.pointsFor.toFixed(2)}</td>
+                <td>
+                  {team.owner === season2024Data.championOwner && "🏆 Champion"}
+                  {team.owner === season2024Data.runnerUpOwner && "🥈 Runner-Up"}
+                  {team.owner === season2024Data.thirdPlaceOwner && "🥉 3rd Place"}
+                  {team.owner === season2024Data.toiletBowlOwner && "🚽 1st Pick"}
+                  {team.owner === "mafoulk" && "Missed Playoffs"}
+                  {team.owner === "Evenkeel75" && "Missed Playoffs"}
+                  {team.owner === "asmartaleck1" && "Missed Playoffs"}
+                  {team.owner === "Dbfoulkrod" && "Lost Wild Card"}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- The Eternal Rivalry - Special Section -->
+  <section class="fff-rivalry-section">
+    <div class="fff-container">
+      <h2 class="fff-section-title">The Eternal Rivalry</h2>
+      <p class="fff-rivalry-subtitle">Robfoulk vs Mafoulk - 2024 Season</p>
+      
+      <div class="fff-rivalry-comparison">
+        <div class="fff-rival-card robfoulk-card">
+          <h3>@robfoulk</h3>
+          <div class="fff-rival-team">Also too old to run</div>
+          <div class="fff-rival-stats">
+            <div class="fff-rival-stat">
+              <span class="fff-stat-number">12-3</span>
+              <span class="fff-stat-label">Regular Season</span>
+            </div>
+            <div class="fff-rival-stat">
+              <span class="fff-stat-number">🥈</span>
+              <span class="fff-stat-label">Runner-Up</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fff-vs-divider">
+          <span>VS</span>
+          <div class="fff-h2h-record">Head-to-Head: TBD</div>
+        </div>
+
+        <div class="fff-rival-card mafoulk-card">
+          <h3>@mafoulk</h3>
+          <div class="fff-rival-team">Code 3</div>
+          <div class="fff-rival-stats">
+            <div class="fff-rival-stat">
+              <span class="fff-stat-number">1-14</span>
+              <span class="fff-stat-label">Regular Season</span>
+            </div>
+            <div class="fff-rival-stat">
+              <span class="fff-stat-number">8th</span>
+              <span class="fff-stat-label">Final Position</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="fff-rivalry-summary">
+        <p>2024 Bragging Rights: <strong>@robfoulk</strong> dominates with a playoff run!</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Looking Ahead -->
+  <section class="fff-looking-ahead">
+    <div class="fff-container">
+      <h2 class="fff-section-title">2025 Season Preview</h2>
+      <div class="fff-preview-cards">
+        <div class="fff-preview-card">
+          <h3>Draft Date</h3>
+          <p>August 23, 2025 • 5:00 PM ET</p>
+        </div>
+        <div class="fff-preview-card">
+          <h3>First Overall Pick</h3>
+          <p>@{season2024Data.toiletBowlOwner}</p>
+          <p class="fff-preview-note">Earned via Toilet Bowl Victory</p>
+        </div>
+        <div class="fff-preview-card">
+          <h3>Defending Champion</h3>
+          <p>@{season2024Data.championOwner}</p>
+          <p class="fff-preview-note">Can they repeat?</p>
+        </div>
+      </div>
+    </div>
+  </section>
+</BaseLayout>
+
+<style>
+  /* Hero Section */
+  .fff-history-hero {
+    position: relative;
+    background: linear-gradient(135deg, var(--fff-black) 0%, var(--fff-crimson-dark) 100%);
+    padding: 5rem 1rem;
+    text-align: center;
+    overflow: hidden;
+  }
+
+  .fff-hero-background {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+    background-image: 
+      repeating-linear-gradient(45deg, transparent, transparent 35px, rgba(255,255,255,.05) 35px, rgba(255,255,255,.05) 70px);
+  }
+
+  .fff-history-title {
+    position: relative;
+    font-size: clamp(2.5rem, 6vw, 5rem);
+    color: white;
+    margin: 0;
+    font-weight: 900;
+    line-height: 1.1;
+  }
+
+  .fff-title-line {
+    display: block;
+    font-size: 0.6em;
+    font-weight: 400;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--fff-gold);
+  }
+
+  .fff-title-emphasis {
+    display: block;
+    text-transform: uppercase;
+    background: linear-gradient(90deg, var(--fff-gold), var(--fff-gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .fff-history-subtitle {
+    font-size: 1.25rem;
+    color: rgba(255,255,255,0.8);
+    margin: 1.5rem 0;
+  }
+
+  .fff-current-champion-banner {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.75rem;
+    background: rgba(212,175,55,0.2);
+    border: 2px solid var(--fff-gold);
+    border-radius: 2rem;
+    padding: 0.75rem 1.5rem;
+    margin-top: 2rem;
+    color: white;
+    font-size: 1.125rem;
+  }
+
+  .fff-crown-icon {
+    font-size: 1.5rem;
+    animation: bounce 2s infinite;
+  }
+
+  @keyframes bounce {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-5px); }
+  }
+
+  /* Championship Showcase */
+  .fff-champions-showcase {
+    padding: 4rem 1rem;
+    background: var(--fff-background);
+  }
+
+  .fff-section-title {
+    font-size: 2.5rem;
+    text-align: center;
+    margin-bottom: 3rem;
+    color: var(--fff-crimson);
+    font-weight: 900;
+  }
+
+  .fff-championship-results {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+    margin-bottom: 4rem;
+  }
+
+  .fff-result-feature {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.3s;
+  }
+
+  .fff-result-feature:hover {
+    transform: translateY(-8px);
+  }
+
+  .fff-result-feature.champion {
+    background: linear-gradient(135deg, white, rgba(255,215,0,0.1));
+    border: 3px solid gold;
+  }
+
+  .fff-result-feature.runner-up {
+    background: linear-gradient(135deg, white, rgba(192,192,192,0.1));
+    border: 2px solid silver;
+  }
+
+  .fff-result-feature.third {
+    background: linear-gradient(135deg, white, rgba(205,127,50,0.1));
+    border: 2px solid #CD7F32;
+  }
+
+  .fff-result-feature.toilet {
+    background: linear-gradient(135deg, white, rgba(135,206,235,0.1));
+    border: 2px solid skyblue;
+  }
+
+  .fff-result-icon {
+    font-size: 3rem;
+    margin-bottom: 1rem;
+  }
+
+  .fff-result-feature h3 {
+    color: var(--fff-crimson);
+    margin-bottom: 1rem;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fff-result-team {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--fff-black);
+    margin-bottom: 0.5rem;
+  }
+
+  .fff-result-owner {
+    color: var(--fff-text-muted);
+    font-size: 1rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .fff-result-record {
+    font-size: 0.875rem;
+    color: var(--fff-crimson);
+    font-weight: 600;
+  }
+
+  .fff-result-bonus {
+    margin-top: 1rem;
+    padding: 0.5rem;
+    background: var(--fff-gold);
+    color: var(--fff-black);
+    border-radius: 0.5rem;
+    font-weight: 700;
+    font-size: 0.875rem;
+  }
+
+  /* Division Winners */
+  .fff-division-winners {
+    margin-bottom: 3rem;
+  }
+
+  .fff-subsection-title {
+    font-size: 1.75rem;
+    text-align: center;
+    margin-bottom: 2rem;
+    color: var(--fff-crimson-dark);
+  }
+
+  .fff-division-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .fff-division-card {
+    background: white;
+    border-left: 4px solid var(--fff-gold);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .fff-division-card h4 {
+    color: var(--fff-text-muted);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fff-division-winner {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--fff-black);
+  }
+
+  .fff-division-record {
+    color: var(--fff-crimson);
+    font-weight: 600;
+  }
+
+  /* Season Highlights */
+  .fff-season-highlights {
+    background: white;
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  }
+
+  .fff-highlights-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 2rem;
+  }
+
+  .fff-highlight-card {
+    text-align: center;
+    padding: 1rem;
+    background: var(--fff-cream);
+    border-radius: 0.5rem;
+  }
+
+  .fff-highlight-label {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--fff-text-muted);
+    margin-bottom: 0.5rem;
+  }
+
+  .fff-highlight-value {
+    display: block;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--fff-crimson);
+  }
+
+  .fff-highlight-detail {
+    display: block;
+    font-size: 0.875rem;
+    color: var(--fff-text-muted);
+    margin-top: 0.25rem;
+  }
+
+  /* Standings Table */
+  .fff-standings-section {
+    background: var(--fff-black);
+    color: white;
+    padding: 4rem 1rem;
+  }
+
+  .fff-standings-section .fff-section-title {
+    color: var(--fff-gold);
+  }
+
+  .fff-standings-table {
+    overflow-x: auto;
+  }
+
+  .fff-standings-table table {
+    width: 100%;
+    border-collapse: collapse;
+    background: rgba(255,255,255,0.05);
+    backdrop-filter: blur(10px);
+    border-radius: 0.5rem;
+    overflow: hidden;
+  }
+
+  .fff-standings-table th {
+    background: var(--fff-crimson);
+    color: white;
+    padding: 1rem;
+    text-align: left;
+    font-weight: 600;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+  }
+
+  .fff-standings-table td {
+    padding: 1rem;
+    border-bottom: 1px solid rgba(255,255,255,0.1);
+  }
+
+  .fff-standings-table tbody tr:hover {
+    background: rgba(255,255,255,0.05);
+  }
+
+  .fff-standings-table .champion-row {
+    background: rgba(212,175,55,0.1);
+  }
+
+  .fff-standings-table .team-name {
+    font-weight: 700;
+    color: var(--fff-gold);
+  }
+
+  /* Rivalry Section */
+  .fff-rivalry-section {
+    background: linear-gradient(135deg, var(--fff-crimson-dark), var(--fff-black));
+    padding: 4rem 1rem;
+    text-align: center;
+  }
+
+  .fff-rivalry-section .fff-section-title {
+    color: white;
+  }
+
+  .fff-rivalry-subtitle {
+    color: var(--fff-gold);
+    font-size: 1.25rem;
+    margin-bottom: 3rem;
+  }
+
+  .fff-rivalry-comparison {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 3rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .fff-rival-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border-radius: 1rem;
+    padding: 2rem;
+    min-width: 250px;
+    transition: transform 0.3s;
+  }
+
+  .fff-rival-card:hover {
+    transform: scale(1.05);
+  }
+
+  .fff-rival-card h3 {
+    color: white;
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+  }
+
+  .fff-rival-team {
+    color: var(--fff-gold);
+    margin-bottom: 1.5rem;
+    font-weight: 600;
+  }
+
+  .fff-rival-stats {
+    display: flex;
+    gap: 2rem;
+    justify-content: center;
+  }
+
+  .fff-rival-stat {
+    text-align: center;
+  }
+
+  .fff-stat-number {
+    display: block;
+    font-size: 2rem;
+    font-weight: 900;
+    color: white;
+    margin-bottom: 0.25rem;
+  }
+
+  .fff-stat-label {
+    display: block;
+    font-size: 0.75rem;
+    color: rgba(255,255,255,0.7);
+    text-transform: uppercase;
+  }
+
+  .fff-vs-divider {
+    color: var(--fff-crimson-light);
+    font-size: 2rem;
+    font-weight: 900;
+  }
+
+  .fff-h2h-record {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 0.5rem;
+  }
+
+  .fff-rivalry-summary {
+    margin-top: 2rem;
+    color: white;
+    font-size: 1.125rem;
+  }
+
+  .fff-rivalry-summary strong {
+    color: var(--fff-gold);
+  }
+
+  /* Looking Ahead */
+  .fff-looking-ahead {
+    padding: 4rem 1rem;
+    background: var(--fff-background);
+  }
+
+  .fff-preview-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 2rem;
+  }
+
+  .fff-preview-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    text-align: center;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  }
+
+  .fff-preview-card h3 {
+    color: var(--fff-crimson);
+    margin-bottom: 1rem;
+    font-size: 1.25rem;
+  }
+
+  .fff-preview-card p {
+    color: var(--fff-black);
+    font-size: 1.125rem;
+    font-weight: 600;
+  }
+
+  .fff-preview-note {
+    color: var(--fff-text-muted);
+    font-size: 0.875rem;
+    font-style: italic;
+    margin-top: 0.5rem;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .fff-championship-results {
+      grid-template-columns: 1fr;
+    }
+
+    .fff-rivalry-comparison {
+      flex-direction: column;
+    }
+
+    .fff-standings-table {
+      font-size: 0.875rem;
+    }
+
+    .fff-standings-table th,
+    .fff-standings-table td {
+      padding: 0.5rem;
+    }
+  }
+</style>

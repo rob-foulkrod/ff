@@ -1,0 +1,292 @@
+<!-- filepath: c:\class\ff\site\src\components\HeroSection.astro -->
+---
+// Import league data
+let leagueData;
+try {
+  leagueData = await import('../data/league-data.json').then(m => m.default);
+} catch {
+  leagueData = { seasons: { 2025: { standings: [] }, 2024: { standings: [] } } };
+}
+
+// 2024 Season Final Results from Sleeper
+const season2024Champion = "jfoulkrod";
+const season2024ToiletBowlWinner = "NOTDada"; // Gets 1st pick in 2025
+const lastYearFinalStandings = [
+  { team: "Also too old to run (robfoulk)", record: "12-3" },
+  { team: "CeeDeez Nuts (jfoulkrod)", record: "10-5" },
+  { team: "Chase Brown Tanks (ebmookie)", record: "10-5" },
+  { team: "GibbMeDaRock (Dbfoulkrod)", record: "10-5" }
+];
+
+// Draft date: August 23, 2025 at 5:00 PM ET
+const draftDate = new Date('2025-08-23T21:00:00Z'); // 5 PM EDT = 21:00 UTC
+const now = new Date();
+const isDraftComplete = now > draftDate;
+
+// Calculate days until draft
+const daysUntilDraft = Math.ceil((draftDate - now) / (1000 * 60 * 60 * 24));
+---
+
+<section class="fff-hero">
+  <div class="fff-hero-bg">
+    <div class="field-lines"></div>
+  </div>
+  <div class="fff-container">
+    <div class="fff-hero-content">
+      <h1 class="fff-hero-title">Welcome to the Battleground</h1>
+      <p class="fff-hero-subtitle">Where Family Pride Meets Fantasy Glory</p>
+      
+      <div class="fff-hero-cards">
+        <div class="fff-leader-card">
+          <div class="fff-card-icon">🏆</div>
+          <h3>2024 Champion</h3>
+          <div class="fff-leader-name">CeeDeez Nuts</div>
+          <div class="fff-leader-record">jfoulkrod</div>
+          <p class="fff-champion-note">Defending Champion</p>
+        </div>
+
+        <div class="fff-matchup-card">
+          <div class="fff-card-icon">🥇</div>
+          <h3>2025 First Pick</h3>
+          <div class="fff-first-pick">
+            <span class="team-name">NOTDada</span>
+            <span class="pick-reason">Toilet Bowl Winner</span>
+          </div>
+          <p class="fff-pick-note">Earned through adversity</p>
+        </div>
+
+        <div class="fff-countdown-card">
+          <div class="fff-card-icon">🏈</div>
+          <h3>2025 Draft Begins</h3>
+          <div class="fff-draft-date">August 23, 2025 • 5:00 PM ET</div>
+          <div class="fff-countdown" id="countdown">
+            <span class="time-unit"><span id="days">0</span>d</span>
+            <span class="time-unit"><span id="hours">0</span>h</span>
+            <span class="time-unit"><span id="minutes">0</span>m</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="fff-hero-cta">
+        <a href="/seasons/2024" class="fff-btn-hero">
+          View 2024 Final Results
+        </a>
+        <a href={`https://sleeper.com/draft/nfl/1180276953741729793`} class="fff-btn-hero-outline" target="_blank" rel="noopener">
+          Enter Draft Room
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+  // Countdown to Draft: August 23, 2025 at 5:00 PM ET
+  function updateCountdown() {
+    const now = new Date();
+    const draftDate = new Date('2025-08-23T21:00:00Z'); // 5 PM EDT
+    
+    const diff = draftDate - now;
+    
+    if (diff > 0) {
+      const days = Math.floor(diff / (1000 * 60 * 60 * 24));
+      const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
+      
+      const daysEl = document.getElementById('days');
+      const hoursEl = document.getElementById('hours');
+      const minutesEl = document.getElementById('minutes');
+      
+      if (daysEl) daysEl.textContent = days.toString();
+      if (hoursEl) hoursEl.textContent = hours.toString();
+      if (minutesEl) minutesEl.textContent = minutes.toString();
+    }
+  }
+  
+  updateCountdown();
+  setInterval(updateCountdown, 60000); // Update every minute
+</script>
+
+<style>
+  .fff-hero {
+    position: relative;
+    background: linear-gradient(135deg, var(--fff-black) 0%, var(--fff-crimson-dark) 100%);
+    padding: 4rem 1rem;
+    overflow: hidden;
+  }
+
+  .fff-hero-bg {
+    position: absolute;
+    inset: 0;
+    opacity: 0.1;
+  }
+
+  .field-lines {
+    height: 100%;
+    background-image: 
+      repeating-linear-gradient(90deg, transparent, transparent 10%, rgba(255,255,255,0.1) 10%, rgba(255,255,255,0.1) 10.5%),
+      repeating-linear-gradient(0deg, transparent, transparent 20%, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0.05) 21%);
+  }
+
+  .fff-hero-content {
+    position: relative;
+    text-align: center;
+  }
+
+  .fff-hero-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    color: white;
+    margin: 0 0 0.5rem;
+    text-transform: uppercase;
+    font-weight: 900;
+    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .fff-hero-subtitle {
+    font-size: 1.25rem;
+    color: var(--fff-gold);
+    margin: 0 0 3rem;
+  }
+
+  .fff-hero-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 2rem;
+    margin: 3rem 0;
+  }
+
+  .fff-leader-card,
+  .fff-matchup-card,
+  .fff-countdown-card {
+    background: rgba(255,255,255,0.1);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--fff-gold);
+    border-radius: 1rem;
+    padding: 2rem;
+    transition: transform 0.3s;
+  }
+
+  .fff-leader-card:hover,
+  .fff-matchup-card:hover,
+  .fff-countdown-card:hover {
+    transform: translateY(-5px);
+    background: rgba(255,255,255,0.15);
+  }
+
+  .fff-card-icon {
+    font-size: 2.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .fff-countdown-card h3,
+  .fff-leader-card h3,
+  .fff-matchup-card h3 {
+    color: white;
+    margin: 0.5rem 0;
+  }
+
+  .fff-draft-date {
+    color: var(--fff-gold);
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0.5rem 0 1rem;
+  }
+
+  .fff-leader-name {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: white;
+    margin: 0.5rem 0;
+  }
+
+  .fff-leader-record {
+    font-size: 1.125rem;
+    color: var(--fff-gold);
+  }
+
+  .fff-champion-note,
+  .fff-pick-note {
+    font-size: 0.875rem;
+    color: rgba(255,255,255,0.7);
+    margin-top: 0.5rem;
+    font-style: italic;
+  }
+
+  .fff-first-pick {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin: 1rem 0;
+  }
+
+  .fff-first-pick .team-name {
+    font-weight: 700;
+    color: white;
+    font-size: 1.5rem;
+  }
+
+  .fff-first-pick .pick-reason {
+    color: var(--fff-gold);
+    font-size: 0.875rem;
+    margin-top: 0.25rem;
+  }
+
+  .fff-countdown {
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+    font-size: 1.5rem;
+    color: white;
+    font-weight: 700;
+  }
+
+  .time-unit {
+    background: rgba(0,0,0,0.3);
+    padding: 0.5rem 1rem;
+    border-radius: 0.5rem;
+    min-width: 60px;
+  }
+
+  .fff-hero-cta {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  .fff-btn-hero {
+    padding: 1rem 2rem;
+    background: var(--fff-gold);
+    color: var(--fff-black);
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    transition: transform 0.2s;
+  }
+
+  .fff-btn-hero:hover {
+    transform: scale(1.05);
+    background: var(--fff-gold-light);
+  }
+
+  .fff-btn-hero-outline {
+    padding: 1rem 2rem;
+    background: transparent;
+    color: white;
+    border: 2px solid white;
+    text-decoration: none;
+    font-weight: 700;
+    border-radius: 0.5rem;
+    transition: all 0.2s;
+  }
+
+  .fff-btn-hero-outline:hover {
+    background: white;
+    color: var(--fff-black);
+  }
+
+  @media (max-width: 768px) {
+    .fff-hero-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

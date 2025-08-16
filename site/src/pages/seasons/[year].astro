@@ -1,0 +1,123 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import StandingsTable from '../../components/StandingsTable.astro';
+
+export async function getStaticPaths() {
+  // Import league data
+  let leagueData;
+  try {
+    leagueData = await import('../../data/league-data.json').then(m => m.default);
+  } catch (error) {
+    // If no data, create minimal paths
+    return [
+      { params: { year: '2025' } },
+      { params: { year: '2024' } }
+    ];
+  }
+
+  return Object.keys(leagueData.seasons).map(year => ({
+    params: { year }
+  }));
+}
+
+const { year } = Astro.params;
+
+// Import league data
+let leagueData;
+try {
+  leagueData = await import('../../data/league-data.json').then(m => m.default);
+} catch (error) {
+  leagueData = { seasons: {}, reports: {} };
+}
+
+const seasonData = leagueData.seasons[year] || { standings: [] };
+const reports = leagueData.reports[year] || {};
+const weeks = Object.keys(reports).sort((a, b) => parseInt(a) - parseInt(b));
+
+const isCurrent = year === '2025';
+const isComplete = year === '2024';
+---
+
+<BaseLayout title={`${year} Season`} description={`${year} FoulkNFootball season results and statistics`}>
+  <div class="space-y-8">
+    <!-- Season Header -->
+    <div class="text-center">
+      <h1 class="text-5xl font-bold mb-4">
+        🏈 {year} Season
+        {isCurrent && <span class="text-green-600"> (Current)</span>}
+        {isComplete && <span class="text-blue-600"> (Complete)</span>}
+      </h1>
+      
+      {seasonData.standings.length > 0 && (
+        <div class="grid md:grid-cols-3 gap-4 max-w-xl mx-auto mt-6">
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h3 class="font-semibold text-sm text-gray-600 dark:text-gray-400">CHAMPION</h3>
+            <p class="text-lg font-bold">{isComplete ? seasonData.standings[0].team : 'TBD'}</p>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h3 class="font-semibold text-sm text-gray-600 dark:text-gray-400">WEEKS PLAYED</h3>
+            <p class="text-lg font-bold">{weeks.length}</p>
+          </div>
+          <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
+            <h3 class="font-semibold text-sm text-gray-600 dark:text-gray-400">TEAMS</h3>
+            <p class="text-lg font-bold">{seasonData.standings.length}</p>
+          </div>
+        </div>
+      )}
+    </div>
+
+    <!-- Season Standings -->
+    {seasonData.standings.length > 0 && (
+      <section>
+        <h2 class="text-3xl font-bold mb-6">🏆 Final Standings</h2>
+        <StandingsTable standings={seasonData.standings} />
+      </section>
+    )}
+
+    <!-- Weekly Reports -->
+    {weeks.length > 0 && (
+      <section>
+        <h2 class="text-3xl font-bold mb-6">📅 Weekly Reports</h2>
+        <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
+          {weeks.map(week => (
+            <a 
+              href={`/seasons/${year}/week/${week}`}
+              class="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-transparent hover:border-green-500"
+            >
+              <div class="text-center">
+                <h3 class="font-bold text-lg">Week {week}</h3>
+                <p class="text-sm text-gray-600 dark:text-gray-400">View Report</p>
+              </div>
+            </a>
+          ))}
+        </div>
+      </section>
+    )}
+
+    <!-- Navigation -->
+    <section class="flex justify-center space-x-4">
+      <a href="/seasons" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+        ← All Seasons
+      </a>
+      {isCurrent && (
+        <a href={`/seasons/${year}/week/${weeks[weeks.length - 1] || '1'}`} class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors">
+          Latest Week →
+        </a>
+      )}
+    </section>
+
+    <!-- Season Summary (for completed seasons) -->
+    {isComplete && (
+      <section class="bg-blue-50 dark:bg-blue-900/20 p-8 rounded-lg">
+        <h2 class="text-3xl font-bold mb-4 text-blue-800 dark:text-blue-300">🎊 {year} Season Summary</h2>
+        <div class="prose dark:prose-invert">
+          <p>
+            The {year} season marked another chapter in the ongoing FoulkNFootball saga. 
+            {seasonData.standings[0] && `${seasonData.standings[0].team} emerged victorious, `}
+            continuing the tradition of intense family competition that has defined this league.
+          </p>
+        </div>
+      </section>
+    )}
+  </div>
+</BaseLayout>

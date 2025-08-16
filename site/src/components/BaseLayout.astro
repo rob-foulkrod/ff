@@ -1,0 +1,158 @@
+<!-- filepath: c:\class\ff\site\src\layouts\BaseLayout.astro -->
+---
+import Header from '../components/Header.astro';
+import Footer from '../components/Footer.astro';
+
+export interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = "FoulknFootball Fantasy League - Where Family Rivalries Meet Fantasy Glory" } = Astro.props;
+---
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    
+    <!-- Open Graph -->
+    <meta property="og:title" content={`${title} | FoulknFootball`} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content="/og-image.png" />
+    <meta property="og:type" content="website" />
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/png" href="/favicon.png" />
+    
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
+    
+    <!-- Theme CSS -->
+    <link rel="stylesheet" href="/styles/foulknfootball-theme.css" />
+    
+    <title>{title} | FoulknFootball</title>
+  </head>
+  <body>
+    <Header />
+    
+    <main id="main-content">
+      <slot />
+    </main>
+    
+    <Footer />
+    
+    <!-- Back to top button -->
+    <button id="back-to-top" class="fff-back-to-top" aria-label="Back to top">
+      ↑
+    </button>
+  </body>
+</html>
+
+<style is:global>
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    margin: 0;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+    background: var(--fff-background);
+    color: var(--fff-text);
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+  }
+
+  #main-content {
+    flex: 1;
+  }
+
+  .fff-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Back to top button */
+  .fff-back-to-top {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    background: var(--fff-crimson);
+    color: white;
+    border: none;
+    font-size: 1.5rem;
+    cursor: pointer;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s;
+    z-index: 999;
+  }
+
+  .fff-back-to-top.visible {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .fff-back-to-top:hover {
+    background: var(--fff-crimson-dark);
+    transform: translateY(-3px);
+  }
+
+  /* Loading state */
+  .fff-loading {
+    display: inline-block;
+    width: 20px;
+    height: 20px;
+    border: 3px solid var(--fff-cream);
+    border-top-color: var(--fff-crimson);
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  @keyframes spin {
+    to { transform: rotate(360deg); }
+  }
+
+  /* Skip to content link for accessibility */
+  .skip-to-content {
+    position: absolute;
+    left: -9999px;
+    z-index: 999;
+    padding: 1rem;
+    background: var(--fff-black);
+    color: white;
+    text-decoration: none;
+  }
+
+  .skip-to-content:focus {
+    left: 50%;
+    transform: translateX(-50%);
+    top: 0;
+  }
+</style>
+
+<script>
+  // Back to top button
+  const backToTop = document.getElementById('back-to-top');
+  
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      backToTop?.classList.add('visible');
+    } else {
+      backToTop?.classList.remove('visible');
+    }
+  });
+  
+  backToTop?.addEventListener('click', () => {
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+</script>

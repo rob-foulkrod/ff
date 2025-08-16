@@ -1,0 +1,190 @@
+---
+import BaseLayout from '../../../../layouts/BaseLayout.astro';
+import { marked } from 'marked';
+
+export async function getStaticPaths() {
+  // Import league data
+  let leagueData;
+  try {
+    leagueData = await import('../../../../data/league-data.json').then(m => m.default);
+  } catch (error) {
+    console.warn('Could not load league data for week pages:', error.message);
+    // If no data, create minimal paths
+    return [
+      { params: { year: '2025', week: '1' } },
+      { params: { year: '2024', week: '1' } }
+    ];
+  }
+
+  const paths = [];
+  for (const [year, reports] of Object.entries(leagueData.reports || {})) {
+    for (const week of Object.keys(reports)) {
+      paths.push({
+        params: { year, week: week.padStart(2, '0') } // Ensure week is zero-padded (01, 02, etc.)
+      });
+    }
+  }
+
+  console.log(`Generated ${paths.length} week page paths`);
+  return paths;
+}
+
+const { year, week } = Astro.params;
+
+// Import league data
+let leagueData;
+try {
+  leagueData = await import('../../../../data/league-data.json').then(m => m.default);
+} catch (error) {
+  console.warn('Could not load league data for week page:', error.message);
+  leagueData = { seasons: {}, reports: {} };
+}
+
+const report = leagueData.reports[year]?.[week] || leagueData.reports[year]?.[parseInt(week).toString()];
+const seasonData = leagueData.seasons[year] || { standings: [] };
+
+// Get previous/next week navigation
+const allWeeks = Object.keys(leagueData.reports[year] || {}).sort((a, b) => parseInt(a) - parseInt(b));
+const currentIndex = allWeeks.indexOf(week);
+const prevWeek = currentIndex > 0 ? allWeeks[currentIndex - 1] : null;
+const nextWeek = currentIndex < allWeeks.length - 1 ? allWeeks[currentIndex + 1] : null;
+
+// Parse markdown content
+const htmlContent = report ? marked(report.content) : '';
+
+// Extract key stats from report content
+const getWeeklyStats = (content) => {
+  if (!content) return null;
+  
+  // Simple parsing for demonstration - in practice, you'd parse more carefully
+  const lines = content.split('\n');
+  const stats = {};
+  
+  // Look for highest score
+  const highestScoreLine = lines.find(line => line.includes('Highest Score'));
+  if (highestScoreLine) {
+    const match = highestScoreLine.match(/(\w+).*?(\d+\.\d+)/);
+    if (match) {
+      stats.highestScore = { team: match[1], score: match[2] };
+    }
+  }
+  
+  return stats;
+};
+
+const weeklyStats = getWeeklyStats(report?.content);
+---
+
+<BaseLayout title={`${year} Week ${week}`} description={`Week ${week} recap for the ${year} FoulkNFootball season`}>
+  <div class="space-y-8">
+    <!-- Week Header -->
+    <div class="text-center">
+      <h1 class="text-5xl font-bold mb-4">
+        🏈 {year} Week {week}
+      </h1>
+      <p class="text-xl text-gray-600 dark:text-gray-400">FoulkNFootball Weekly Recap</p>
+    </div>
+
+    <!-- Week Navigation -->
+    <div class="flex justify-between items-center">
+      <div>
+        {prevWeek ? (
+          <a href={`/seasons/${year}/week/${prevWeek}`} class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+            ← Week {prevWeek}
+          </a>
+        ) : (
+          <div class="px-4 py-2 text-gray-400">← Week {prevWeek}</div>
+        )}
+      </div>
+      
+      <a href={`/seasons/${year}`} class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+        {year} Season
+      </a>
+      
+      <div>
+        {nextWeek ? (
+          <a href={`/seasons/${year}/week/${nextWeek}`} class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">
+            Week {nextWeek} →
+          </a>
+        ) : (
+          <div class="px-4 py-2 text-gray-400">Week {nextWeek} →</div>
+        )}
+      </div>
+    </div>
+
+    <!-- Quick Stats -->
+    {weeklyStats && (
+      <section class="bg-green-50 dark:bg-green-900/20 p-6 rounded-lg">
+        <h2 class="text-2xl font-bold mb-4 text-green-800 dark:text-green-300">📊 Week {week} Highlights</h2>
+        <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+          {weeklyStats.highestScore && (
+            <div class="bg-white dark:bg-gray-800 p-4 rounded-lg">
+              <h3 class="font-semibold text-sm text-gray-600 dark:text-gray-400">HIGHEST SCORE</h3>
+              <p class="text-lg font-bold">{weeklyStats.highestScore.team}</p>
+              <p class="text-green-600 dark:text-green-400">{weeklyStats.highestScore.score} pts</p>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- Main Report Content -->
+    {report ? (
+      <section class="bg-white dark:bg-gray-800 p-8 rounded-lg shadow">
+        <div class="prose dark:prose-invert max-w-none">
+          <Fragment set:html={htmlContent} />
+        </div>
+      </section>
+    ) : (
+      <section class="text-center py-12">
+        <h2 class="text-2xl font-bold mb-4">📝 Report Coming Soon</h2>
+        <p class="text-gray-600 dark:text-gray-400">
+          The Week {week} report for {year} will be available once the week is complete.
+        </p>
+      </section>
+    )}
+
+    <!-- AI Recap Section (Future Enhancement) -->
+    <section class="bg-purple-50 dark:bg-purple-900/20 p-6 rounded-lg">
+      <h2 class="text-2xl font-bold mb-4 text-purple-800 dark:text-purple-300">🤖 AI-Powered Recap</h2>
+      <div class="text-center py-8">
+        <p class="text-gray-600 dark:text-gray-400 mb-4">
+          AI-generated weekly recaps with personality insights and predictions coming soon!
+        </p>
+        <div class="bg-purple-200 dark:bg-purple-800 p-4 rounded-lg inline-block">
+          <p class="text-sm">🚀 This feature will include:</p>
+          <ul class="text-sm mt-2 space-y-1">
+            <li>• Player performance analysis</li>
+            <li>• Family rivalry highlights</li>
+            <li>• Predictions for next week</li>
+            <li>• Trash talk summaries</li>
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Back Navigation -->
+    <div class="flex justify-center space-x-4">
+      <a href={`/seasons/${year}`} class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+        ← Back to {year} Season
+      </a>
+      <a href="/seasons" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+        All Seasons
+      </a>
+    </div>
+  </div>
+</BaseLayout>
+
+<script>
+  // Add any client-side interactivity here
+  document.addEventListener('DOMContentLoaded', () => {
+    // Example: Add copy-to-clipboard for sharing
+    const title = document.querySelector('h1');
+    if (title) {
+      title.addEventListener('click', () => {
+        navigator.clipboard.writeText(window.location.href);
+        // Could show a toast notification here
+      });
+    }
+  });
+</script>

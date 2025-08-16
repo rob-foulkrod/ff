@@ -1,0 +1,46 @@
+≡ƒÅê FoulkNFootball Data Pipeline
+=====================================
+≡ƒôû Reading weekly reports...
+≡ƒôé Reports directory found: C:\class\ff\reports\weekly
+≡ƒôü Found season directories: 2024
+≡ƒöì Reading year directory: C:\class\ff\reports\weekly\2024
+≡ƒôè 2024: Found 15 weekly reports - week-01.md, week-02.md, week-03.md, week-04.md, week-05.md, week-06.md, week-07.md, week-08.md, week-09.md, week-10.md, week-11.md, week-12.md, week-13.md, week-14.md, week-15.md
+≡ƒôû Reading week-01.md from C:\class\ff\reports\weekly\2024\week-01.md
+Γ£à Processed Week 01 - Standings: 0, H2H: 22
+≡ƒôû Reading week-02.md from C:\class\ff\reports\weekly\2024\week-02.md
+Γ£à Processed Week 02 - Standings: 0, H2H: 22
+≡ƒôû Reading week-03.md from C:\class\ff\reports\weekly\2024\week-03.md
+Γ£à Processed Week 03 - Standings: 0, H2H: 22
+≡ƒôû Reading week-04.md from C:\class\ff\reports\weekly\2024\week-04.md
+Γ£à Processed Week 04 - Standings: 0, H2H: 22
+≡ƒôû Reading week-05.md from C:\class\ff\reports\weekly\2024\week-05.md
+Γ£à Processed Week 05 - Standings: 0, H2H: 22
+≡ƒôû Reading week-06.md from C:\class\ff\reports\weekly\2024\week-06.md
+Γ£à Processed Week 06 - Standings: 0, H2H: 22
+≡ƒôû Reading week-07.md from C:\class\ff\reports\weekly\2024\week-07.md
+Γ£à Processed Week 07 - Standings: 0, H2H: 22
+≡ƒôû Reading week-08.md from C:\class\ff\reports\weekly\2024\week-08.md
+Γ£à Processed Week 08 - Standings: 0, H2H: 22
+≡ƒôû Reading week-09.md from C:\class\ff\reports\weekly\2024\week-09.md
+Γ£à Processed Week 09 - Standings: 0, H2H: 22
+≡ƒôû Reading week-10.md from C:\class\ff\reports\weekly\2024\week-10.md
+Γ£à Processed Week 10 - Standings: 0, H2H: 22
+≡ƒôû Reading week-11.md from C:\class\ff\reports\weekly\2024\week-11.md
+Γ£à Processed Week 11 - Standings: 0, H2H: 22
+≡ƒôû Reading week-12.md from C:\class\ff\reports\weekly\2024\week-12.md
+Γ£à Processed Week 12 - Standings: 0, H2H: 22
+≡ƒôû Reading week-13.md from C:\class\ff\reports\weekly\2024\week-13.md
+Γ£à Processed Week 13 - Standings: 0, H2H: 22
+≡ƒôû Reading week-14.md from C:\class\ff\reports\weekly\2024\week-14.md
+Γ£à Processed Week 14 - Standings: 0, H2H: 22
+≡ƒôû Reading week-15.md from C:\class\ff\reports\weekly\2024\week-15.md
+Γ£à Processed Week 15 - Standings: 0, H2H: 22
+≡ƒÅå Extracting season standings...
+≡ƒæ¿ΓÇì≡ƒæª Setting up family structure...
+ΓÜö∩╕Å Calculating head-to-head records...
+≡ƒÆ╛ Writing league data...
+Γ£à Data pipeline completed successfully!
+≡ƒôè Processed: 15 reports across 1 seasons
+≡ƒÅå 2024 Final Standings:
+≡ƒôä Output: C:\class\ff\site\src\data\league-data.json
+≡ƒÄ» Ready for Astro site generation!
