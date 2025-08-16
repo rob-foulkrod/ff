@@ -6,6 +6,7 @@ export interface Props {
 
 const { title, description = 'FoulkNFootball - Where Family Rivalries Meet Fantasy Glory' } = Astro.props;
 const currentPath = Astro.url.pathname;
+const BASE = import.meta.env.BASE_URL || '/';
 ---
 
 <!DOCTYPE html>
@@ -15,11 +16,11 @@ const currentPath = Astro.url.pathname;
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
   <title>{title} | FoulkNFootball</title>
-  <link rel="icon" type="image/png" href="/FoulknFootball.png">
+  <link rel="icon" type="image/png" href={`${BASE}FoulknFootball.png`}>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="/styles/foulknfootball-theme.css">
+  <link rel="stylesheet" href={`${BASE}styles/foulknfootball-theme.css`}>
   <style>
     /* Tailwind Reset */
     *, ::before, ::after {
@@ -54,8 +55,8 @@ const currentPath = Astro.url.pathname;
   <header class="fff-header">
     <div class="container">
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
-        <a href="/" class="fff-logo-container">
-          <img src="/FoulknFootball.png" alt="FoulkNFootball Logo" class="fff-logo-image">
+        <a href={BASE} class="fff-logo-container">
+          <img src={`${BASE}FoulknFootball.png`} alt="FoulkNFootball Logo" class="fff-logo-image">
           <span class="fff-logo-text">FoulkNFootball</span>
         </a>
         <button class="fff-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
@@ -66,12 +67,12 @@ const currentPath = Astro.url.pathname;
     <nav class="fff-nav">
       <div class="container">
         <div class="fff-nav-links">
-          <a href="/" class={`fff-nav-link ${currentPath === '/' ? 'active' : ''}`}>Home</a>
-          <a href="/seasons/2025" class={`fff-nav-link ${currentPath.includes('/seasons/2025') ? 'active' : ''}`}>Current Season</a>
-          <a href="/seasons" class={`fff-nav-link ${currentPath === '/seasons' ? 'active' : ''}`}>History</a>
-          <a href="/rivalries" class={`fff-nav-link ${currentPath === '/rivalries' ? 'active' : ''}`}>Rivalries</a>
-          <a href="/records" class={`fff-nav-link ${currentPath === '/records' ? 'active' : ''}`}>Records</a>
-          <a href="/teams" class={`fff-nav-link ${currentPath === '/teams' ? 'active' : ''}`}>Teams</a>
+          <a href={BASE} class={`fff-nav-link ${currentPath === BASE || currentPath === '/' ? 'active' : ''}`}>Home</a>
+          <a href={`${BASE}seasons/2025`} class={`fff-nav-link ${currentPath.includes('/seasons/2025') ? 'active' : ''}`}>Current Season</a>
+          <a href={`${BASE}seasons`} class={`fff-nav-link ${currentPath === '/seasons' ? 'active' : ''}`}>History</a>
+          <a href={`${BASE}rivalries`} class={`fff-nav-link ${currentPath === '/rivalries' ? 'active' : ''}`}>Rivalries</a>
+          <a href={`${BASE}records`} class={`fff-nav-link ${currentPath === '/records' ? 'active' : ''}`}>Records</a>
+          <a href={`${BASE}teams`} class={`fff-nav-link ${currentPath === '/teams' ? 'active' : ''}`}>Teams</a>
         </div>
       </div>
     </nav>
@@ -83,7 +84,7 @@ const currentPath = Astro.url.pathname;
   
   <footer class="fff-footer">
     <div class="container">
-      <img src="/FoulknFootball.png" alt="FoulkNFootball" class="fff-footer-logo">
+  <img src={`${BASE}FoulknFootball.png`} alt="FoulkNFootball" class="fff-footer-logo">
       <div class="fff-footer-text">
         <p>&copy; 2025 FoulkNFootball. All rights reserved.</p>
         <p class="fff-footer-motto">Memento es Foulkrod</p>

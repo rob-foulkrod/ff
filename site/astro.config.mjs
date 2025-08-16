@@ -4,8 +4,9 @@ import tailwind from '@astrojs/tailwind';
 
 export default defineConfig({
   integrations: [react(), tailwind()],
-  site: 'https://foulknfootball.com',
-  base: '/',
+  // Use GitHub Pages base when deploying to https://rob-foulkrod.github.io/ff/
+  site: 'https://rob-foulkrod.github.io/ff',
+  base: '/ff/',
   output: 'static',
   build: {
     format: 'directory'
