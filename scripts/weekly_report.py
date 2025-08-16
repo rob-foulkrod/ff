@@ -224,7 +224,7 @@ def _fetch_weekly_groups(
     weeks: dict[int, dict[int, list[dict]]] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         rows = _get(f"{BASE_URL}/league/{league_id}/matchups/{wk}").json()
-    weeks[wk] = _compute_group_rows(rows)
+        weeks[wk] = _compute_group_rows(rows)  # THIS MUST BE INSIDE THE LOOP
     return weeks
 
 
