@@ -1,0 +1,199 @@
+---
+interface Standing {
+  rank: number;
+  team: string;
+  wins: number;
+  losses: number;
+  points: number;
+  winPercentage: number;
+}
+
+interface Props {
+  standings: Standing[];
+}
+
+const { standings } = Astro.props;
+
+// Add visual indicators
+const getRecordClass = (wins, losses) => {
+  const winPct = wins / (wins + losses);
+  if (winPct >= 0.7) return 'elite';
+  if (winPct >= 0.5) return 'good';
+  return 'struggling';
+};
+
+const getTrendIcon = () => {
+  // This would check previous week
+  return '↑'; // or ↓ or →
+};
+---
+
+<div class="fff-standings-wrapper">
+  <table class="fff-standings-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>Team</th>
+        <th>Record</th>
+        <th>PF</th>
+        <th>PA</th>
+        <th>Streak</th>
+        <th>Trend</th>
+      </tr>
+    </thead>
+    <tbody>
+      {standings.map((team, index) => (
+        <tr class={`fff-team-row ${index === 0 ? 'leader' : ''} ${index < 6 ? 'playoff' : ''}`}>
+          <td class="rank">
+            {index === 0 && <span class="crown">👑</span>}
+            {index + 1}
+          </td>
+          <td class="team-name">
+            <div class="team-info">
+              <span class="team-avatar">{team.team.charAt(0)}</span>
+              <span>{team.team}</span>
+            </div>
+          </td>
+          <td class={`record ${getRecordClass(team.wins, team.losses)}`}>
+            <span class="wins">{team.wins}</span>
+            <span class="separator">-</span>
+            <span class="losses">{team.losses}</span>
+          </td>
+          <td class="points-for">{team.pointsFor.toFixed(1)}</td>
+          <td class="points-against">{team.pointsAgainst.toFixed(1)}</td>
+          <td class="streak">
+            <span class={`streak-badge ${team.wins > team.losses ? 'hot' : 'cold'}`}>
+              W2
+            </span>
+          </td>
+          <td class="trend">
+            <span class="trend-arrow up">{getTrendIcon()}</span>
+          </td>
+        </tr>
+      ))}
+    </tbody>
+  </table>
+</div>
+
+<style>
+  .fff-standings-wrapper {
+    overflow-x: auto;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  }
+
+  .fff-standings-table {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+  }
+
+  .fff-standings-table thead {
+    background: var(--fff-black);
+    color: white;
+  }
+
+  .fff-standings-table th {
+    padding: 1rem;
+    text-align: left;
+    font-weight: 700;
+    text-transform: uppercase;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+  }
+
+  .fff-team-row {
+    border-bottom: 1px solid var(--fff-cream-dark);
+    transition: background 0.2s;
+  }
+
+  .fff-team-row:hover {
+    background: var(--fff-cream);
+  }
+
+  .fff-team-row.leader {
+    background: linear-gradient(90deg, rgba(212,175,55,0.1) 0%, transparent 100%);
+  }
+
+  .fff-team-row.playoff {
+    border-left: 4px solid var(--fff-gold);
+  }
+
+  .fff-team-row td {
+    padding: 1rem;
+  }
+
+  .team-info {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 600;
+  }
+
+  .team-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: var(--fff-crimson);
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+  }
+
+  .record {
+    font-weight: 700;
+    font-size: 1.125rem;
+  }
+
+  .record.elite .wins { color: var(--fff-gold); }
+  .record.good .wins { color: var(--fff-black); }
+  .record.struggling .losses { color: var(--fff-crimson); }
+
+  .streak-badge {
+    padding: 0.25rem 0.75rem;
+    border-radius: 1rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .streak-badge.hot {
+    background: var(--fff-gold);
+    color: var(--fff-black);
+  }
+
+  .streak-badge.cold {
+    background: var(--fff-crimson);
+    color: white;
+  }
+
+  .trend-arrow {
+    font-size: 1.25rem;
+    font-weight: 700;
+  }
+
+  .trend-arrow.up { color: #10b981; }
+  .trend-arrow.down { color: #ef4444; }
+
+  .crown {
+    margin-right: 0.25rem;
+  }
+
+  @media (max-width: 768px) {
+    .fff-standings-table {
+      font-size: 0.875rem;
+    }
+
+    .fff-standings-table th,
+    .fff-standings-table td {
+      padding: 0.5rem;
+    }
+
+    .team-avatar {
+      width: 24px;
+      height: 24px;
+      font-size: 0.75rem;
+    }
+  }
+</style>

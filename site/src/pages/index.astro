@@ -1,0 +1,320 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import HeroSection from '../components/HeroSection.astro';
+import StandingsTable from '../components/StandingsTable.astro';
+
+// 2024 Final Standings from Sleeper
+const season2024FinalStandings = [
+  // Kids Table 1985
+  { team: "Also too old to run", owner: "robfoulk", wins: 12, losses: 3, pointsFor: 2544.66, pointsAgainst: 2360.78, division: "Kids Table 1985" },
+  { team: "Chase Brown Tanks", owner: "ebmookie", wins: 10, losses: 5, pointsFor: 2368.66, pointsAgainst: 2376.38, division: "Kids Table 1985" },
+  { team: "Steel City", owner: "Evenkeel75", wins: 4, losses: 11, pointsFor: 2267.04, pointsAgainst: 2416.76, division: "Kids Table 1985" },
+  { team: "Hauwk Tua", owner: "asmartaleck1", wins: 3, losses: 12, pointsFor: 2275.42, pointsAgainst: 2360.78, division: "Kids Table 1985" },
+  // Kids Table 2010
+  { team: "CeeDeez Nuts", owner: "jfoulkrod", wins: 10, losses: 5, pointsFor: 2599.24, pointsAgainst: 2464.52, division: "Kids Table 2010" },
+  { team: "GibbMeDaRock", owner: "Dbfoulkrod", wins: 10, losses: 5, pointsFor: 2609.62, pointsAgainst: 2377.74, division: "Kids Table 2010" },
+  { team: "BearDown", owner: "NOTDada", wins: 10, losses: 5, pointsFor: 2537.36, pointsAgainst: 2637.9, division: "Kids Table 2010" },
+  { team: "Code 3", owner: "mafoulk", wins: 1, losses: 14, pointsFor: 2282.12, pointsAgainst: 2515.28, division: "Kids Table 2010" }
+];
+
+// Championship Results
+const championshipResults = {
+  champion: "CeeDeez Nuts (jfoulkrod)",
+  runnerUp: "Also too old to run (robfoulk)",
+  thirdPlace: "Chase Brown Tanks (ebmookie)",
+  toiletBowlWinner: "NOTDada (BearDown)",
+  firstPick2025: "NOTDada"
+};
+---
+
+<BaseLayout title="Home">
+  <HeroSection />
+  
+  <!-- Main Content with Theme -->
+  <div class="fff-container">
+    <!-- 2024 Championship Results -->
+    <section class="fff-section">
+      <div class="fff-championship-banner">
+        <div class="fff-championship-content">
+          <h2 class="fff-championship-title">🏆 2024 Season Complete!</h2>
+          <div class="fff-championship-grid">
+            <div class="fff-result-card gold">
+              <span class="fff-result-icon">🥇</span>
+              <span class="fff-result-label">Champion</span>
+              <span class="fff-result-team">CeeDeez Nuts</span>
+              <span class="fff-result-owner">jfoulkrod</span>
+            </div>
+            <div class="fff-result-card silver">
+              <span class="fff-result-icon">🥈</span>
+              <span class="fff-result-label">Runner-Up</span>
+              <span class="fff-result-team">Also too old to run</span>
+              <span class="fff-result-owner">robfoulk</span>
+            </div>
+            <div class="fff-result-card bronze">
+              <span class="fff-result-icon">🥉</span>
+              <span class="fff-result-label">Third Place</span>
+              <span class="fff-result-team">Chase Brown Tanks</span>
+              <span class="fff-result-owner">ebmookie</span>
+            </div>
+            <div class="fff-result-card toilet">
+              <span class="fff-result-icon">🚽</span>
+              <span class="fff-result-label">2025 First Pick</span>
+              <span class="fff-result-team">BearDown</span>
+              <span class="fff-result-owner">NOTDada</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 2024 Final Standings -->
+    <section class="fff-section">
+      <div class="fff-card">
+        <div class="fff-card-header">
+          <h2 class="fff-card-title">2024 Final Regular Season Standings</h2>
+        </div>
+        <div class="fff-card-body">
+          <StandingsTable standings={season2024FinalStandings} />
+        </div>
+      </div>
+    </section>
+
+    <!-- Quick Links Grid -->
+    <section class="fff-section">
+      <div class="fff-grid">
+        <div class="fff-card fff-link-card">
+          <div class="fff-card-body">
+            <h3 class="fff-card-subtitle">2024 Playoffs</h3>
+            <p class="fff-text-muted">
+              Relive the championship run and final battles
+            </p>
+            <a href="/seasons/2024/playoffs" class="fff-button fff-button-primary">
+              View Playoff Bracket
+            </a>
+          </div>
+        </div>
+
+        <div class="fff-card fff-link-card">
+          <div class="fff-card-body">
+            <h3 class="fff-card-subtitle">2025 Draft Prep</h3>
+            <p class="fff-text-muted">
+              Get ready for the upcoming draft on August 23
+            </p>
+            <a href="/draft-prep" class="fff-button fff-button-secondary">
+              Draft Resources
+            </a>
+          </div>
+        </div>
+
+        <div class="fff-card fff-link-card">
+          <div class="fff-card-body">
+            <h3 class="fff-card-subtitle">Eternal Rivalry</h3>
+            <p class="fff-text-muted">
+              Robfoulk vs Mafoulk: The family feud continues
+            </p>
+            <a href="/rivalry" class="fff-button fff-button-accent">
+              View Rivalry Stats
+            </a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</BaseLayout>
+
+<style>
+  .fff-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--fff-space-xl) var(--fff-space-md);
+  }
+
+  .fff-section {
+    margin-bottom: var(--fff-space-2xl);
+  }
+
+  /* Championship Banner */
+  .fff-championship-banner {
+    background: linear-gradient(135deg, var(--fff-gold) 0%, var(--fff-gold-dark) 100%);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 8px 24px rgba(212,175,55,0.3);
+    margin-bottom: 2rem;
+  }
+
+  .fff-championship-content {
+    text-align: center;
+  }
+
+  .fff-championship-title {
+    font-size: 2rem;
+    color: var(--fff-black);
+    margin: 0 0 2rem 0;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fff-championship-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .fff-result-card {
+    background: white;
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.5rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform 0.2s;
+  }
+
+  .fff-result-card:hover {
+    transform: translateY(-4px);
+  }
+
+  .fff-result-card.gold {
+    background: linear-gradient(135deg, #fff, rgba(255,215,0,0.1));
+    border: 2px solid gold;
+  }
+
+  .fff-result-card.silver {
+    background: linear-gradient(135deg, #fff, rgba(192,192,192,0.1));
+    border: 2px solid silver;
+  }
+
+  .fff-result-card.bronze {
+    background: linear-gradient(135deg, #fff, rgba(205,127,50,0.1));
+    border: 2px solid #CD7F32;
+  }
+
+  .fff-result-card.toilet {
+    background: linear-gradient(135deg, #fff, rgba(135,206,235,0.1));
+    border: 2px solid skyblue;
+  }
+
+  .fff-result-icon {
+    font-size: 2.5rem;
+  }
+
+  .fff-result-label {
+    font-size: 0.875rem;
+    color: var(--fff-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .fff-result-team {
+    font-size: 1.125rem;
+    font-weight: 700;
+    color: var(--fff-black);
+  }
+
+  .fff-result-owner {
+    font-size: 0.875rem;
+    color: var(--fff-crimson);
+    font-weight: 600;
+  }
+
+  /* Grid and Cards */
+  .fff-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: var(--fff-space-lg);
+  }
+
+  .fff-link-card {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  .fff-link-card .fff-card-body {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    padding: var(--fff-space-lg);
+  }
+
+  .fff-card-subtitle {
+    font-size: 1.5rem;
+    font-weight: 700;
+    margin: 0 0 var(--fff-space-md) 0;
+    color: var(--fff-crimson);
+  }
+
+  .fff-text-muted {
+    color: var(--fff-text-muted);
+    margin: 0 0 var(--fff-space-lg) 0;
+    flex: 1;
+    line-height: 1.6;
+  }
+
+  .fff-button {
+    display: inline-block;
+    padding: var(--fff-space-md) var(--fff-space-lg);
+    border-radius: 0.375rem;
+    text-decoration: none;
+    font-weight: 700;
+    font-size: 0.9375rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    transition: all 0.2s ease;
+    text-align: center;
+    width: 100%;
+    border: none;
+    cursor: pointer;
+    margin-top: auto;
+  }
+
+  .fff-button-primary {
+    background: var(--fff-black);
+    color: white;
+  }
+
+  .fff-button-primary:hover {
+    background: var(--fff-crimson);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .fff-button-secondary {
+    background: var(--fff-crimson);
+    color: white;
+  }
+
+  .fff-button-secondary:hover {
+    background: var(--fff-crimson-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(220,20,60,0.3);
+  }
+
+  .fff-button-accent {
+    background: var(--fff-gold);
+    color: var(--fff-black);
+  }
+
+  .fff-button-accent:hover {
+    background: var(--fff-gold-dark);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(212,175,55,0.3);
+  }
+
+  @media (max-width: 768px) {
+    .fff-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .fff-championship-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .fff-container {
+      padding: var(--fff-space-lg) var(--fff-space-sm);
+    }
+  }
+</style>
