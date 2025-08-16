@@ -59,8 +59,8 @@ const getTrendIcon = () => {
             <span class="separator">-</span>
             <span class="losses">{team.losses}</span>
           </td>
-          <td class="points-for">{team.pointsFor.toFixed(1)}</td>
-          <td class="points-against">{team.pointsAgainst.toFixed(1)}</td>
+          <td class="points-for">{typeof team.pointsFor === 'number' ? team.pointsFor.toFixed(1) : '—'}</td>
+          <td class="points-against">{typeof team.pointsAgainst === 'number' ? team.pointsAgainst.toFixed(1) : '—'}</td>
           <td class="streak">
             <span class={`streak-badge ${team.wins > team.losses ? 'hot' : 'cold'}`}>
               W2
