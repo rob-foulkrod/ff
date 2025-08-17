@@ -11,6 +11,87 @@ export interface Props {
 }
 
 const { title, description = "FoulknFootball Fantasy League - Where Family Rivalries Meet Fantasy Glory" } = Astro.props;
+
+// 2024 Season Data from week-15.md
+const season2024Data = {
+  year: 2024,
+  champion: "CeeDeez Nuts",
+  championOwner: "jfoulkrod",
+  runnerUp: "Also too old to run",
+  runnerUpOwner: "robfoulk",
+  thirdPlace: "GibbMeDaRock",
+  thirdPlaceOwner: "Dbfoulkrod",
+  toiletBowlWinner: "BearDown",
+  toiletBowlOwner: "NOTDoda",
+  standings: [
+    // Final standings from week-15.md
+    { rank: 1, team: "Also too old to run", owner: "robfoulk", wins: 12, losses: 3, pointsFor: 2856.20, pointsAgainst: 2544.86, division: "Kids Table 1985" },
+    { rank: 2, team: "CeeDeez Nuts", owner: "jfoulkrod", wins: 10, losses: 5, pointsFor: 2843.28, pointsAgainst: 2599.24, division: "Kids Table 2010" },
+    { rank: 3, team: "GibbMeDaRock", owner: "Dbfoulkrod", wins: 10, losses: 5, pointsFor: 2777.74, pointsAgainst: 2609.62, division: "Kids Table 2010" },
+    { rank: 4, team: "Chase Brown Tanks", owner: "ebmookie", wins: 10, losses: 5, pointsFor: 2676.38, pointsAgainst: 2368.66, division: "Kids Table 1985" },
+    { rank: 5, team: "BearDown", owner: "NOTDoda", wins: 10, losses: 5, pointsFor: 2637.90, pointsAgainst: 2537.36, division: "Kids Table 2010" },
+    { rank: 6, team: "Steel City", owner: "Evenkeel75", wins: 4, losses: 11, pointsFor: 2416.76, pointsAgainst: 2667.04, division: "Kids Table 1985" },
+    { rank: 7, team: "Hawk Tua", owner: "asmartaleck1", wins: 3, losses: 12, pointsFor: 2360.78, pointsAgainst: 2775.42, division: "Kids Table 1985" },
+    { rank: 8, team: "Code 3", owner: "mafoulk", wins: 1, losses: 14, pointsFor: 2215.28, pointsAgainst: 2682.12, division: "Kids Table 2010" }
+  ],
+  highestScore: 2856.20,
+  highestScoreTeam: "Also too old to run",
+  totalWeeks: 15,
+  playoffWeeks: 3,
+  weekHighScore: { week: 15, team: "robfoulk", points: 233.54 },
+  seasonHighScore: { team: "Unknown", points: 249.76 }, // From metadata
+  seasonLowScore: { team: "Unknown", points: 107.74 } // From metadata
+};
+
+// Create season summaries array with 2024 data
+const seasonSummaries = [season2024Data];
+
+// Get display names (no last names needed as per instructions)
+const getDisplayName = (username) => {
+  const names = {
+    'robfoulk': 'Rob',
+    'jfoulkrod': 'Jake',
+    'Dbfoulkrod': 'Devin',
+    'ebmookie': 'Eric',
+    'NOTDoda': 'Dakota',
+    'Evenkeel75': 'Brian',
+    'asmartaleck1': 'Dave',
+    'mafoulk': 'Michael'
+  };
+  return names[username] || username;
+};
+
+// Get Team names
+const getTeamName = (username) => {
+  const names = {
+    'robfoulk': 'Also too old to run',
+    'jfoulkrod': 'CeeDeez Nuts',
+    'Dbfoulkrod': 'GibbMeDaRock',
+    'ebmookie': 'Chase Brown Tanks',
+    'NOTDoda': 'BearDown',
+    'Evenkeel75': 'Steel City',
+    'asmartaleck1': 'Hawk Tua',
+    'mafoulk': 'Code 3'
+  };
+  return names[username] || username;
+};
+
+
+
+
+// Family relationships from instructions
+const familyInfo = {
+  dads: ['robfoulk', 'Evenkeel75', 'asmartaleck1', 'ebmookie'],
+  sons: ['jfoulkrod', 'Dbfoulkrod', 'mafoulk', 'NOTDoda'],
+  relationships: {
+    'jfoulkrod': 'robfoulk', // Jake is Rob's son
+    'Dbfoulkrod': 'Evenkeel75', // Devin is Brian's son
+    'mafoulk': 'asmartaleck1', // Michael is Dave's son
+    'NOTDoda': 'asmartaleck1' // Dakota is Dave's son
+  }
+};
+
+
 ---
 
 <!DOCTYPE html>

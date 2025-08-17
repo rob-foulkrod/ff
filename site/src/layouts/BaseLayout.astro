@@ -52,30 +52,26 @@ const BASE = import.meta.env.BASE_URL || '/';
   </style>
 </head>
 <body>
-  <header class="fff-header">
-    <div class="container">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 1rem 0;">
-        <a href={BASE} class="fff-logo-container">
-          <img src={`${BASE}FoulknFootball.png`} alt="FoulkNFootball Logo" class="fff-logo-image">
-          <span class="fff-logo-text">FoulkNFootball</span>
-        </a>
-        <button class="fff-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
-          <span class="theme-icon" style="font-size: 1.25rem;">🌙</span>
-        </button>
-      </div>
+  <header class="fff-header backdrop-blur-md bg-white/60 dark:bg-gray-900/60 sticky top-0 z-50">
+    <div class="container mx-auto flex justify-between items-center py-3 px-4">
+      <a href={BASE} class="fff-logo-container">
+        <img src={`${BASE}FoulknFootball.png`} alt="FoulkNFootball Logo" class="fff-logo-image">
+        <span class="fff-logo-text">FoulkNFootball</span>
+      </a>
+
+      <nav class="flex gap-6 text-sm font-semibold">
+        <a href="/ff/" class="nav-link" class:list={[Astro.url.pathname === '/' && 'is-active']}>Home</a>
+        <a href="/ff/seasons/2025" class="nav-link" class:list={[Astro.url.pathname.startsWith('/seasons/2025') && 'is-active']}>Current&nbsp;Season</a>
+        <a href="/ff/seasons" class="nav-link" class:list={[Astro.url.pathname.startsWith('/seasons') && 'is-active']}>History</a>
+        <a href="/ff/rivalries" class="nav-link" class:list={[Astro.url.pathname.startsWith('/rivalries') && 'is-active']}>Rivalries</a>
+        <a href="/ff/records" class="nav-link" class:list={[Astro.url.pathname.startsWith('/records') && 'is-active']}>Records</a>
+        <a href="/ff/teams" class="nav-link" class:list={[Astro.url.pathname.startsWith('/teams') && 'is-active']}>Teams</a>
+      </nav>
+
+      <button class="fff-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
+        <span class="theme-icon" style="font-size: 1.25rem;">🌙</span>
+      </button>
     </div>
-    <nav class="fff-nav">
-      <div class="container">
-        <div class="fff-nav-links">
-          <a href={BASE} class={`fff-nav-link ${currentPath === BASE || currentPath === '/' ? 'active' : ''}`}>Home</a>
-          <a href={`${BASE}seasons/2025`} class={`fff-nav-link ${currentPath.includes('/seasons/2025') ? 'active' : ''}`}>Current Season</a>
-          <a href={`${BASE}seasons`} class={`fff-nav-link ${currentPath === '/seasons' ? 'active' : ''}`}>History</a>
-          <a href={`${BASE}rivalries`} class={`fff-nav-link ${currentPath === '/rivalries' ? 'active' : ''}`}>Rivalries</a>
-          <a href={`${BASE}records`} class={`fff-nav-link ${currentPath === '/records' ? 'active' : ''}`}>Records</a>
-          <a href={`${BASE}teams`} class={`fff-nav-link ${currentPath === '/teams' ? 'active' : ''}`}>Teams</a>
-        </div>
-      </div>
-    </nav>
   </header>
   
   <main>

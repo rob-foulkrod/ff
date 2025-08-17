@@ -769,3 +769,38 @@ h1, h2, h3, h4, h5, h6 {
   padding: var(--fff-space-2xl) 0;
   margin-top: var(--fff-space-2xl);
 }
+
+/* 1️⃣  Global nav link style  + active state */
+.nav-link {
+  @apply text-gray-700 dark:text-gray-300 hover:text-emerald-600 dark:hover:text-emerald-400 transition-colors;
+}
+.nav-link.is-active {
+  @apply text-emerald-600 dark:text-emerald-400 relative;
+}
+.nav-link.is-active::after {
+  content: '';
+  @apply absolute -bottom-2 left-0 right-0 h-1 bg-emerald-500 rounded-full;
+}
+
+/* 2️⃣  Scrollbar & table overflow helpers */
+.scroll-x {
+  @apply overflow-x-auto;
+}
+.scroll-x::-webkit-scrollbar {
+  height: 8px;
+}
+.scroll-x::-webkit-scrollbar-thumb {
+  @apply bg-emerald-500 rounded;
+}
+
+/* 3️⃣  Minor utility aliases that replaced the old .fff-* declarations */
+.card-glow {
+  @apply relative overflow-hidden rounded-2xl bg-white dark:bg-gray-800 border border-white/10 dark:border-gray-700 shadow-xl;
+}
+.card-glow::before {
+  content: '';
+  @apply absolute inset-0 bg-gradient-to-r from-emerald-400 to-cyan-400 opacity-10 blur-lg;
+}
+
+/* Remove anything that re-implemented Tailwind: */
+/* .fff-* class blocks have been deleted from this file */
