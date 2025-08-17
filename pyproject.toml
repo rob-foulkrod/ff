@@ -1,3 +1,26 @@
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools]
+package-dir = {"" = "python"}
+
+[tool.setuptools.packages.find]
+where = ["python"]
+include = ["ff*"]
+[project]
+name = "ff"
+version = "0.1.0"
+description = "Sleeper weekly reports (modular)"
+requires-python = ">=3.11"
+dependencies = [
+  "requests>=2.32.0",
+]
+
+[project.scripts]
+weekly-report = "ff.cli.weekly_report:main"
+ff-answers = "ff.api.answers:main"
+
 [tool.black]
 line-length = 100
 target-version = ["py311"]
@@ -10,7 +33,7 @@ extend-exclude = '''
 
 [tool.ruff]
 line-length = 100
-src = ["scripts", "."]
+src = ["python/ff", "python/cli", "scripts", "."]
 exclude = [
   ".venv",
   "__pycache__",
@@ -39,7 +62,7 @@ ignore = [
 
 [tool.ruff.lint.isort]
 combine-as-imports = true
-known-first-party = ["scripts"]
+known-first-party = ["scripts", "ff"]
 
 [tool.mypy]
 python_version = "3.11"
@@ -51,6 +74,6 @@ no_implicit_optional = true
 strict_equality = true
 ignore_missing_imports = true
 exclude = "(^\\.|^build/|^dist/|^reports/|^openapi/|^__pycache__/|^\\.venv/|^tests/__pycache__/)"
-files = ["scripts"]
+files = ["python/ff", "python/cli", "scripts"]
 explicit_package_bases = true
 mypy_path = "."

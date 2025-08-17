@@ -1,0 +1,3 @@
+[console_scripts]
+ff-answers = ff.api.answers:main
+weekly-report = ff.cli.weekly_report:main

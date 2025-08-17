@@ -1,3 +1,9 @@
+"""(Deprecated) Legacy location for Sleeper Q&A helpers.
+
+Use the packaged module `ff.api.answers` instead. This file will be removed after
+the migration period. Functionality kept temporarily for backward compatibility.
+"""
+
 import os
 import sys
 import json

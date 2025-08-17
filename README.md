@@ -20,13 +20,19 @@ pip install -r requirements.txt
 3) Generate a weekly report (Markdown default)
 
 ```powershell
-# Single week for a season
-python scripts/weekly_report.py --season 2024 --report-week 11
+# Single week for a season (new packaged CLI)
+weekly-report --season 2024 --report-week 11
+
+# Or via Python module (develop mode)
+python -m cli.weekly_report --season 2024 --report-week 11
 
 # The file will be written to: reports/weekly/2024/week-11.md
 
-# Include JSON alongside Markdown
-python scripts/weekly_report.py --season 2024 --report-week 11 --formats markdown,json --json-pretty
+# Include JSON alongside Markdown (pretty JSON is now the default)
+weekly-report --season 2024 --report-week 11 --formats markdown,json
+
+# Generate compact JSON instead of pretty
+weekly-report --season 2024 --report-week 11 --formats json --json-compact
 ```
 
 4) Validate reports
@@ -56,11 +62,12 @@ Notes
 Weekly report generator
 
 ```powershell
-python scripts/weekly_report.py `
-  --league-id 1180276953741729792 `
-  --season 2024 `
-  --report-week 11 `
-  --out-dir reports/weekly `
+weekly-report \
+  --league-id 1180276953741729792 \
+  --season 2024 \
+  --report-week 11 \
+  --out-dir reports/weekly \
+  --formats markdown,json \
   --verbose
 ```
 
@@ -68,17 +75,17 @@ Range/all generation
 
 ```powershell
 # All regular-season weeks for a season (based on league settings.playoff_week_start)
-python scripts/weekly_report.py --season 2024 --all
+weekly-report --season 2024 --all
 
 # Custom range
-python scripts/weekly_report.py --season 2024 --from-week 3 --to-week 8
+weekly-report --season 2024 --from-week 3 --to-week 8
 ```
 
 Dry run
 
 ```powershell
 # Build but do not write files
-python scripts/weekly_report.py --season 2024 --report-week 11 --dry-run --verbose
+weekly-report --season 2024 --report-week 11 --dry-run --verbose
 ```
 
 ## Report contents (current modular version)
@@ -87,7 +94,7 @@ Markdown sections (order):
 1. Title
 2. Metadata (schema_version, generation timestamp, league + season, report_week, start/playoff settings, state_week, same_season flag)
 3. Standings Through Week N (rank, roster_id, W/L/T, win_pct, PF, PA)
-4. (If present) Weekly Results Week N (simple table in JSON only: see below)
+4. (If present) Weekly Results Week N (includes owners, scores, margin, ordered/enriched flags)
 5. (If present) Upcoming Week Preview Week N+1 (only during regular season; omitted/hollow when out of range)
 6. Streaks Through Week N (current streak plus longest win/loss spans)
 
@@ -96,15 +103,24 @@ JSON representation contains:
 - metadata (flattened key/value list from Metadata section)
 - standings (list of team records through the report week)
 - head_to_head_week (list of matchups for the report week, with points and winner_roster_id/tie)
-- weekly_results_enriched_rows (currently a simplified weekly results list: matchup_id, roster/owner + points, winner, margin)
+- weekly_results_enriched_rows (enriched weekly results: matchup_id, winner/loser roster & owner, points, margin, and a deterministic, alphabetically ordered flags/details string; very long flag lists are wrapped with `<br>` for readability)
 - preview (upcoming week matchup roster IDs & owners, when available)
 - streaks_table (current and historical streak information)
 - playoff_rows (placeholder = 0 for now; reserved for future expansion)
 
 Notes:
-- Division standings, playoff seeding, and full head‑to‑head matrix from prior legacy versions have been removed pending redesigned richer modules.
-- Margin is the only enrichment currently retained in weekly_results_enriched_rows.
+- Division standings, playoff seeding rows, and head‑to‑head matrix have been reintroduced in enriched form (including rank change, streaks, playoff hunt indicators, and head‑to‑head preview data when applicable).
+- Weekly results now carry multiple contextual flags (e.g., blowout, nail_biter, upset, division_game, shootout, highest_loser_score_week, lowest_winner_score_week, etc.). The set is normalized and sorted for deterministic output.
+- Very long flag detail strings are wrapped at a configurable width (currently 100 chars) using `<br>` to keep Markdown tables readable.
 - All numeric points and percentages are formatted consistently (see constants for precision).
+
+### JSON output formatting
+
+Pretty (indented) JSON is the default when `json` is included in `--formats`.
+
+Flags:
+- `--json-pretty` (default / idempotent) – keep pretty formatting.
+- `--json-compact` – emit compact JSON (no extra whitespace) for minimal file size or downstream tooling.
 
 ## Other utilities
 
@@ -229,12 +245,15 @@ This ensures the server always starts from `site/` and uses the local `package.j
 
 ```powershell
 # Generate a single week for 2024
-python scripts/weekly_report.py --season 2024 --report-week 11
+weekly-report --season 2024 --report-week 11
 
-# Generate the full regular season for 2024
-python scripts/weekly_report.py --season 2024 --all
+# Generate the full regular season for 2024 (Markdown + pretty JSON)
+weekly-report --season 2024 --all --formats markdown,json
 
-# Validate all generated files for 2024
+# Generate full season with compact JSON only
+weekly-report --season 2024 --all --formats json --json-compact
+
+# Validate all generated files for 2024 (still legacy script path for now)
 python scripts/validate_reports.py --season 2024
 ```
 
