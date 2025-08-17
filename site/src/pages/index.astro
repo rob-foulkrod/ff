@@ -11,14 +11,6 @@ const season2024FinalStandings = season2024Data.standings.map(team => ({
   winPercentage: team.wins && (team.wins + team.losses) ? (team.wins / (team.wins + team.losses)) : 0
 }));
 
-// Championship Results
-const championshipResults = {
-  champion: "CeeDeez Nuts (jfoulkrod)",
-  runnerUp: "Chase Brown Tanks (ebmookie)",
-  thirdPlace: "GibbMeDaRock (Dbfoulkrod)",
-  toiletBowlWinner: "NOTDada (BearDown)",
-  firstPick2025: "NOTDada"
-};
 const BASE = import.meta.env.BASE_URL || '/';
 ---
 
@@ -36,26 +28,26 @@ const BASE = import.meta.env.BASE_URL || '/';
             <div class="fff-result-card gold">
               <span class="fff-result-icon">🥇</span>
               <span class="fff-result-label">Champion</span>
-              <span class="fff-result-team">CeeDeez Nuts</span>
-              <span class="fff-result-owner">jfoulkrod</span>
+              <span class="fff-result-team">{season2024Data.champion}</span>
+              <span class="fff-result-owner">@{season2024Data.championOwner}</span>
             </div>
             <div class="fff-result-card silver">
               <span class="fff-result-icon">🥈</span>
               <span class="fff-result-label">Runner-Up</span>
-              <span class="fff-result-team">Also too old to run</span>
-              <span class="fff-result-owner">robfoulk</span>
+              <span class="fff-result-team">{season2024Data.runnerUp}</span>
+              <span class="fff-result-owner">@{season2024Data.runnerUpOwner}</span>
             </div>
             <div class="fff-result-card bronze">
               <span class="fff-result-icon">🥉</span>
               <span class="fff-result-label">Third Place</span>
-              <span class="fff-result-team">Chase Brown Tanks</span>
-              <span class="fff-result-owner">ebmookie</span>
+              <span class="fff-result-team">{season2024Data.thirdPlace}</span>
+              <span class="fff-result-owner">@{season2024Data.thirdPlaceOwner}</span>
             </div>
             <div class="fff-result-card toilet">
               <span class="fff-result-icon">🚽</span>
               <span class="fff-result-label">2025 First Pick</span>
-              <span class="fff-result-team">BearDown</span>
-              <span class="fff-result-owner">NOTDada</span>
+              <span class="fff-result-team">{season2024Data.toiletBowlWinner}</span>
+              <span class="fff-result-owner">@{season2024Data.toiletBowlOwner}</span>
             </div>
           </div>
         </div>
