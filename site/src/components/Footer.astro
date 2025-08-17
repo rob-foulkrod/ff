@@ -1,6 +1,7 @@
 ---
 // Footer component for Foulk 'n Football Fantasy League
 import { NAV_ITEMS } from '../data/nav.js';
+import season2024Data from '../data/season-2024.json';
 const currentYear = new Date().getFullYear();
 const BASE = import.meta.env.BASE_URL || '/';
 
@@ -69,8 +70,8 @@ try {
           <div class="fff-dynasty-tracker">
             <div class="dynasty-item current-champion">
               <span class="dynasty-label">Current Champion</span>
-              <span class="dynasty-value">CeeDeez Nuts</span>
-              <span class="dynasty-owner">Jake (jfoulkrod)</span>
+              <span class="dynasty-value">{season2024Data.champion}</span>
+              <span class="dynasty-owner">{season2024Data.championOwner}</span>
             </div>
             <div class="dynasty-item">
               <span class="dynasty-label">Rivalry Leader</span>
@@ -79,8 +80,8 @@ try {
             </div>
             <div class="dynasty-item">
               <span class="dynasty-label">2025 #1 Pick</span>
-              <span class="dynasty-value">NOTDada</span>
-              <span class="dynasty-owner">Dakota</span>
+              <span class="dynasty-value">{season2024Data.toiletBowlWinner}</span>
+              <span class="dynasty-owner">{season2024Data.toiletBowlOwner}</span>
             </div>
           </div>
         </div>

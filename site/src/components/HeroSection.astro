@@ -10,23 +10,22 @@ try {
 
 const BASE = import.meta.env.BASE_URL || '/';
 
-// 2024 Season Final Results from Sleeper
-const season2024Champion = "jfoulkrod";
-const season2024ToiletBowlWinner = "NOTDada"; // Gets 1st pick in 2025
-const lastYearFinalStandings = [
-  { team: "Also too old to run (robfoulk)", record: "12-3" },
-  { team: "CeeDeez Nuts (jfoulkrod)", record: "10-5" },
-  { team: "Chase Brown Tanks (ebmookie)", record: "10-5" },
-  { team: "GibbMeDaRock (Dbfoulkrod)", record: "10-5" }
-];
+import season2024Data from '../data/season-2024.json';
+
+// Derive simple display values from season2024Data
+const championTeam = season2024Data.champion;
+const championOwner = season2024Data.championOwner;
+const toiletWinner = season2024Data.toiletBowlWinner;
+const toiletOwner = season2024Data.toiletBowlOwner;
+const lastYearFinalStandings = season2024Data.standings.slice(0,4).map(s => ({ team: `${s.team} (${s.owner})`, record: `${s.wins}-${s.losses}` }));
 
 // Draft date: August 23, 2025 at 5:00 PM ET
 const draftDate = new Date('2025-08-23T21:00:00Z'); // 5 PM EDT = 21:00 UTC
 const now = new Date();
-const isDraftComplete = now > draftDate;
+const isDraftComplete = now.getTime() > draftDate.getTime();
 
-// Calculate days until draft
-const daysUntilDraft = Math.ceil((draftDate - now) / (1000 * 60 * 60 * 24));
+// Calculate days until draft using numeric timestamps
+const daysUntilDraft = Math.ceil((draftDate.getTime() - now.getTime()) / (1000 * 60 * 60 * 24));
 ---
 
 <section class="fff-hero">
@@ -42,8 +41,8 @@ const daysUntilDraft = Math.ceil((draftDate - now) / (1000 * 60 * 60 * 24));
         <div class="fff-leader-card">
           <div class="fff-card-icon">🏆</div>
           <h3>2024 Champion</h3>
-          <div class="fff-leader-name">CeeDeez Nuts</div>
-          <div class="fff-leader-record">jfoulkrod</div>
+          <div class="fff-leader-name">{championTeam}</div>
+          <div class="fff-leader-record">@{championOwner}</div>
           <p class="fff-champion-note">Defending Champion</p>
         </div>
 
@@ -51,8 +50,8 @@ const daysUntilDraft = Math.ceil((draftDate - now) / (1000 * 60 * 60 * 24));
           <div class="fff-card-icon">🥇</div>
           <h3>2025 First Pick</h3>
           <div class="fff-first-pick">
-            <span class="team-name">NOTDada</span>
-            <span class="pick-reason">Toilet Bowl Winner</span>
+            <span class="team-name">{toiletOwner}</span>
+            <span class="pick-reason">{toiletWinner}</span>
           </div>
           <p class="fff-pick-note">Earned through adversity</p>
         </div>
