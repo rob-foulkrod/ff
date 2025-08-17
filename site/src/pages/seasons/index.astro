@@ -47,13 +47,14 @@ const rivalryRecord2024 = {
 
 // Get current champion for special highlighting
 const currentChampion = season2024Data.champion;
+const BASE = import.meta.env.BASE_URL || '/';
 ---
 
 <BaseLayout title="League History" description="Foulk ’n Football championship history and dynasty tracker"> 
   <!-- Hero Section with Modern Gradient -->
   <section class="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-green-800 to-emerald-900 text-white">
     <div class="absolute inset-0 bg-black/30"></div>
-    <div class="absolute inset-0 bg-[url('/field-pattern.svg')] opacity-10"></div>
+    <div class="absolute inset-0" style={`background-image: url('${BASE}field-pattern.svg')`} aria-hidden="true" />
     
     <div class="relative z-10 container mx-auto px-4 py-16 text-center">
       <div class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 backdrop-blur-sm rounded-full mb-6">
@@ -262,7 +263,7 @@ const currentChampion = season2024Data.champion;
   <!-- The Eternal Rivalry - Special Section with Drama -->
   <section class="py-16 bg-gradient-to-br from-red-900 via-red-800 to-orange-900 text-white relative overflow-hidden">
     <div class="absolute inset-0 bg-black/40"></div>
-    <div class="absolute inset-0 bg-[url('/versus-pattern.svg')] opacity-10"></div>
+  <div class="absolute inset-0" style={`background-image: url('${BASE}versus-pattern.svg')`} aria-hidden="true" />
     
     <div class="relative z-10 container mx-auto px-4">
       <h2 class="text-5xl font-black text-center mb-4">The Eternal Rivalry</h2>
