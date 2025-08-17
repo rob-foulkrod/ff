@@ -9,7 +9,7 @@ const __dirname = path.dirname(__filename);
 const REPORTS_DIR = path.resolve(__dirname, '../../reports/weekly');
 const OUTPUT_FILE = path.resolve(__dirname, '../src/data/league-data.json');
 
-console.log('🏈 FoulkNFootball Data Pipeline');
+console.log('🏈 Foulk ’n Football Data Pipeline');
 console.log('=====================================');
 
 // Parse markdown table into objects
@@ -322,7 +322,7 @@ async function main() {
       metadata: {
         totalSeasons: Object.keys(seasons).length,
         totalReports: Object.values(reports).reduce((total, year) => total + Object.keys(year).length, 0),
-        generatedBy: 'FoulkNFootball Data Pipeline v2.0',
+  generatedBy: 'Foulk ’n Football Data Pipeline v2.0',
         dataSource: 'Weekly Markdown Reports + Sleeper API'
       }
     };

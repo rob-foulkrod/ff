@@ -1,0 +1,531 @@
+---
+// Footer component for Foulk 'n Football Fantasy League
+import { NAV_ITEMS } from '../data/nav.js';
+const currentYear = new Date().getFullYear();
+const BASE = import.meta.env.BASE_URL || '/';
+
+// Get current NFL week for display
+let currentWeek = 1;
+try {
+  const response = await fetch('https://api.sleeper.com/v1/state/nfl');
+  const nflState = await response.ok ? await response.json() : null;
+  if (nflState?.week) currentWeek = nflState.week;
+} catch (e) {
+  // Keep default during build
+}
+---
+
+<footer class="fff-footer">
+  <div class="fff-footer-top">
+    <div class="fff-container">
+      <div class="fff-footer-grid">
+        <!-- Logo Panel: occupies its own column to avoid skewing -->
+        <div class="fff-footer-logo-panel">
+          <span class="visually-hidden">Foulk ’n Football logo</span>
+          <img src="/public/FoulknFootball.png" class="fff-footer-logo" alt="Foulk ’n Football logo" />
+        </div>
+
+        <!-- Brand Section (text + stats) -->
+        <div class="fff-footer-brand">
+          <div class="fff-footer-brand-content">
+            <div class="fff-footer-brand-text">
+              <h3 class="fff-footer-title">Foulk 'n Football</h3>
+              <p class="fff-footer-tagline">Memento es Foulkrod</p>
+            </div>
+
+            <p class="fff-footer-description">
+              Where family rivalries meet fantasy glory. Eight teams, two generations,
+              endless bragging rights.
+            </p>
+
+            <div class="fff-footer-stats">
+              <div class="stat-item">
+                <span class="stat-number">8</span>
+                <span class="stat-label">Teams</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">2</span>
+                <span class="stat-label">Generations</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-number">{currentWeek}</span>
+                <span class="stat-label">Current Week</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Navigation Section -->
+        <div class="fff-footer-section">
+          <h4 class="fff-footer-heading">League Central</h4>
+          <nav class="fff-footer-nav">
+            {NAV_ITEMS.filter(i => i.showInFooter).map(item => (
+              <a href={`${BASE.replace(/\/$/, '')}${item.href}`} class="fff-footer-link">{item.title}</a>
+            ))}
+          </nav>
+        </div>
+
+        <!-- Dynasty Tracker -->
+        <div class="fff-footer-section">
+          <h4 class="fff-footer-heading">Dynasty Watch</h4>
+          <div class="fff-dynasty-tracker">
+            <div class="dynasty-item current-champion">
+              <span class="dynasty-label">Current Champion</span>
+              <span class="dynasty-value">CeeDeez Nuts</span>
+              <span class="dynasty-owner">Jake (jfoulkrod)</span>
+            </div>
+            <div class="dynasty-item">
+              <span class="dynasty-label">Rivalry Leader</span>
+              <span class="dynasty-value">Rob</span>
+              <span class="dynasty-badge">12-3 vs Michael</span>
+            </div>
+            <div class="dynasty-item">
+              <span class="dynasty-label">2025 #1 Pick</span>
+              <span class="dynasty-value">NOTDada</span>
+              <span class="dynasty-owner">Dakota</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fun Facts Section -->
+        <div class="fff-footer-section">
+          <h4 class="fff-footer-heading">League Legends</h4>
+          <div class="fff-fun-facts">
+            <div class="fun-fact">
+              <span class="fact-icon">🏆</span>
+              <span class="fact-text">Est. 2024</span>
+            </div>
+            <div class="fun-fact">
+              <span class="fact-icon">👨‍👦</span>
+              <span class="fact-text">4 Father-Son Duos</span>
+            </div>
+            <div class="fun-fact">
+              <span class="fact-icon">🎮</span>
+              <span class="fact-text">Powered by Sleeper</span>
+            </div>
+            <div class="fun-fact">
+              <span class="fact-icon">🔥</span>
+              <span class="fact-text">100% Family Drama</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Bar -->
+  <div class="fff-footer-bottom">
+    <div class="fff-container">
+      <div class="fff-footer-bottom-content">
+        <div class="fff-footer-copyright">
+          <p>&copy; {currentYear} Foulk 'n Football Fantasy League. All rights reserved.</p>
+          <p class="fff-footer-credit">Built with <span class="heart">♥</span> for family competition</p>
+        </div>
+        <div class="fff-footer-tech">
+          <span>Data powered by</span>
+          <a href="https://sleeper.com" target="_blank" rel="noopener" class="sleeper-link">Sleeper API</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+<style>
+  .fff-footer {
+    margin-top: 4rem;
+    background: linear-gradient(180deg, var(--fff-black) 0%, #0a0a0a 100%);
+    color: var(--fff-cream);
+    position: relative;
+    overflow: hidden;
+  }
+
+  .fff-footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, 
+      transparent, 
+      var(--fff-gold), 
+      var(--fff-crimson), 
+      var(--fff-gold), 
+      transparent);
+    animation: shimmer 3s ease-in-out infinite;
+  }
+
+  @keyframes shimmer {
+    0%, 100% { opacity: 0.6; }
+    50% { opacity: 1; }
+  }
+
+  .fff-footer-top {
+    padding: 3rem 0;
+    border-bottom: 1px solid rgba(212, 175, 55, 0.1);
+  }
+
+  .fff-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .fff-footer-grid {
+    display: grid;
+    /* logo panel + brand + nav + dynasty + fun-facts */
+    grid-template-columns: 160px 1.3fr 0.9fr 1fr 0.9fr;
+    gap: 1.25rem; /* tightened for better balance */
+  }
+
+  /* Brand Section */
+  .fff-footer-brand {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+
+  .fff-footer-logo-group {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  /* Logo panel: make image larger, centered, and preserve aspect ratio */
+  .fff-footer-logo-panel {
+    display: flex;
+    align-items: flex-start; /* top-align so logo lines up with heading */
+    justify-content: center;
+    background: linear-gradient(180deg, rgba(255,255,255,0.01), transparent);
+    border-radius: 0.5rem;
+    padding: 0.6rem 0.75rem; /* slight horizontal padding */
+    border: 1px solid rgba(255,255,255,0.015);
+  }
+
+  .fff-footer-logo {
+    width: 120px;
+    height: auto;
+    object-fit: contain; /* prevents skewing */
+    display: block;
+    filter: drop-shadow(0 3px 8px rgba(0,0,0,0.35)); /* softer shadow */
+  }
+
+  /* Accessibility helper: visually hidden but readable by screen readers */
+  .visually-hidden {
+    position: absolute !important;
+    height: 1px; width: 1px;
+    overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+    white-space: nowrap; border: 0; padding: 0; margin: -1px;
+  }
+
+  /* Slightly larger logo on very wide screens to feel intentional */
+  @media (min-width: 1400px) {
+    .fff-footer-logo { width: 140px; }
+    .fff-footer-grid { grid-template-columns: 200px 1.2fr 1fr 1fr 1fr; }
+  }
+
+  .fff-footer-title {
+    margin: 0;
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--fff-gold);
+    letter-spacing: 0.02em;
+  }
+
+  .fff-footer-tagline {
+    margin: 0.25rem 0 0;
+    font-size: 0.875rem;
+    color: var(--fff-silver);
+    font-style: italic;
+  }
+
+  .fff-footer-description {
+    color: rgba(244, 239, 225, 0.8);
+    line-height: 1.6;
+    font-size: 0.95rem;
+  }
+
+  .fff-footer-stats {
+    display: flex;
+    gap: 2rem;
+  }
+
+  .stat-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .stat-number {
+    font-size: 1.5rem;
+    font-weight: 900;
+    color: var(--fff-gold);
+  }
+
+  .stat-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+  }
+
+  /* Section Headers */
+  .fff-footer-heading {
+    margin: 0 0 1.5rem;
+    font-size: 0.875rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    color: var(--fff-gold);
+    position: relative;
+    padding-bottom: 0.75rem;
+  }
+
+  .fff-footer-heading::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 30px;
+    height: 2px;
+    background: var(--fff-crimson);
+  }
+
+  /* Navigation */
+  .fff-footer-nav {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+
+  .fff-footer-link {
+    color: rgba(244, 239, 225, 0.8);
+    text-decoration: none;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.95rem;
+  }
+
+  .fff-footer-link:hover {
+    color: var(--fff-gold);
+    transform: translateX(4px);
+  }
+
+  .fff-rivalry-link {
+    color: var(--fff-crimson-light);
+    font-weight: 600;
+  }
+
+  .fff-rivalry-link:hover {
+    color: var(--fff-crimson);
+    text-shadow: 0 0 8px rgba(220, 53, 69, 0.5);
+  }
+
+  .link-icon {
+    font-size: 1rem;
+    filter: grayscale(0.3);
+  }
+
+  /* Dynasty Tracker */
+  .fff-dynasty-tracker {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .dynasty-item {
+    background: rgba(212, 175, 55, 0.05);
+    border: 1px solid rgba(212, 175, 55, 0.1);
+    border-radius: 0.5rem;
+    padding: 0.75rem;
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+    transition: all 0.3s;
+  }
+
+  .dynasty-item:hover {
+    background: rgba(212, 175, 55, 0.1);
+    border-color: rgba(212, 175, 55, 0.2);
+  }
+
+  .dynasty-item.current-champion {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(212, 175, 55, 0.05));
+    border-color: var(--fff-gold);
+  }
+
+  .dynasty-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    opacity: 0.7;
+  }
+
+  .dynasty-value {
+    font-weight: 700;
+    color: var(--fff-cream);
+  }
+
+  .dynasty-owner {
+    font-size: 0.875rem;
+    color: var(--fff-silver);
+  }
+
+  .dynasty-badge {
+    font-size: 0.75rem;
+    color: var(--fff-crimson-light);
+    font-weight: 600;
+  }
+
+  /* Fun Facts */
+  .fff-fun-facts {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+  }
+
+  .fun-fact {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+  }
+
+  .fact-icon {
+    font-size: 1.25rem;
+    filter: sepia(1) hue-rotate(30deg) brightness(1.2);
+  }
+
+  .fact-text {
+    color: rgba(244, 239, 225, 0.8);
+  }
+
+  /* Bottom Bar */
+  .fff-footer-bottom {
+    background: rgba(0, 0, 0, 0.5);
+    padding: 1.5rem 0;
+  }
+
+  .fff-footer-bottom-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .fff-footer-copyright {
+    text-align: left;
+  }
+
+  .fff-footer-copyright p {
+    margin: 0.25rem 0;
+    font-size: 0.875rem;
+    color: rgba(244, 239, 225, 0.6);
+  }
+
+  .fff-footer-credit {
+    font-size: 0.75rem;
+  }
+
+  .heart {
+    color: var(--fff-crimson);
+    animation: heartbeat 1.5s ease-in-out infinite;
+  }
+
+  @keyframes heartbeat {
+    0%, 100% { transform: scale(1); }
+    50% { transform: scale(1.1); }
+  }
+
+  .fff-footer-tech {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: rgba(244, 239, 225, 0.6);
+  }
+
+  .sleeper-link {
+    color: var(--fff-gold);
+    text-decoration: none;
+    font-weight: 600;
+    transition: all 0.3s;
+  }
+
+  .sleeper-link:hover {
+    color: var(--fff-gold-light);
+    text-shadow: 0 0 8px rgba(212, 175, 55, 0.3);
+  }
+
+  /* Responsive Design */
+  @media (max-width: 1024px) {
+    .fff-footer-grid {
+      grid-template-columns: 1fr 1fr;
+      gap: 2rem;
+    }
+
+    .fff-footer-brand {
+      grid-column: 1 / -1;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .fff-footer-grid {
+      grid-template-columns: 1fr;
+      text-align: center;
+    }
+
+    .fff-footer-logo-group {
+      justify-content: center;
+    }
+
+    .fff-footer-stats {
+      justify-content: center;
+    }
+
+    .fff-footer-heading::after {
+      left: 50%;
+      transform: translateX(-50%);
+    }
+
+    .fff-footer-nav {
+      align-items: center;
+    }
+
+    .fff-footer-link:hover {
+      transform: none;
+    }
+
+    .fff-fun-facts {
+      grid-template-columns: 1fr;
+    }
+
+    .fun-fact {
+      justify-content: center;
+    }
+
+    .fff-footer-bottom-content {
+      flex-direction: column;
+      gap: 1rem;
+      text-align: center;
+    }
+
+    .fff-footer-copyright {
+      text-align: center;
+    }
+  }
+
+  /* Dark mode adjustments */
+  html.dark .fff-footer {
+    background: linear-gradient(180deg, #0a0a0a 0%, #000 100%);
+  }
+
+  html.dark .dynasty-item {
+    background: rgba(212, 175, 55, 0.03);
+  }
+
+  html.dark .fff-footer-bottom {
+    background: rgba(0, 0, 0, 0.8);
+  }
+</style>

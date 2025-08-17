@@ -1,7 +1,7 @@
-# FoulkNFootball History Site - Structure Plan
+# Foulk ’n Football History Site - Structure Plan
 
 ## Site Overview
-A multi-year fantasy football league history site showcasing stats, recaps, and rivalries for the FoulkNFootball (FFF) league - a family league with deep generational rivalries.
+A multi-year fantasy football league history site showcasing stats, recaps, and rivalries for the Foulk ’n Football (FFF) league - a family league with deep generational rivalries.
 
 ## Site Structure
 

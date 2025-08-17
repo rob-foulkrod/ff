@@ -1,10 +1,10 @@
-# FoulkNFootball 🏈
+# Foulk ’n Football 🏈
 
 A comprehensive fantasy football league website showcasing over a decade of family competition, built with modern web technologies.
 
 ## 🎯 Project Overview
 
-FoulkNFootball is a static website that chronicles the ongoing fantasy football saga between two generations - the Dads vs the Sons. This project combines automated data collection from the Sleeper fantasy football platform with a beautiful, responsive web interface built using Astro and React.
+Foulk ’n Football is a static website that chronicles the ongoing fantasy football saga between two generations - the Dads vs the Sons. This project combines automated data collection from the Sleeper fantasy football platform with a beautiful, responsive web interface built using Astro and React.
 
 ## �️ Tech Stack
 
@@ -133,6 +133,6 @@ Feel free to check [our documentation](https://docs.astro.build) or jump into ou
 
 ---
 
-**Built with ❤️ by the FoulkNFootball family**
+**Built with ❤️ by the Foulk ’n Football family**
 
 *Where family bonds meet fantasy football competition!*

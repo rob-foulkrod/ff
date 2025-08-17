@@ -2,20 +2,14 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import HeroSection from '../components/HeroSection.astro';
 import StandingsTable from '../components/StandingsTable.astro';
+import season2024Data from '../data/season-2024.json';
 
-// 2024 Final Standings from Sleeper
-const season2024FinalStandings = [
-  // Kids Table 1985
-  { team: "Also too old to run", owner: "robfoulk", wins: 12, losses: 3, pointsFor: 2544.66, pointsAgainst: 2360.78, division: "Kids Table 1985", current_streak: "W6", trend: "up" },
-  { team: "Chase Brown Tanks", owner: "ebmookie", wins: 10, losses: 5, pointsFor: 2368.66, pointsAgainst: 2376.38, division: "Kids Table 1985", current_streak: "W3", trend: "up" },
-  { team: "Steel City", owner: "Evenkeel75", wins: 4, losses: 11, pointsFor: 2267.04, pointsAgainst: 2416.76, division: "Kids Table 1985", current_streak: "L6", trend: "down" },
-  { team: "Hauwk Tua", owner: "asmartaleck1", wins: 3, losses: 12, pointsFor: 2275.42, pointsAgainst: 2360.78, division: "Kids Table 1985", current_streak: "L4", trend: "down" },
-  // Kids Table 2010
-  { team: "CeeDeez Nuts", owner: "jfoulkrod", wins: 10, losses: 5, pointsFor: 2599.24, pointsAgainst: 2464.52, division: "Kids Table 2010", current_streak: "L2", trend: "down" },
-  { team: "GibbMeDaRock", owner: "Dbfoulkrod", wins: 10, losses: 5, pointsFor: 2609.62, pointsAgainst: 2377.74, division: "Kids Table 2010", current_streak: "W2", trend: "up" },
-  { team: "BearDown", owner: "NOTDada", wins: 10, losses: 5, pointsFor: 2537.36, pointsAgainst: 2637.9, division: "Kids Table 2010", current_streak: "W2", trend: "up" },
-  { team: "Code 3", owner: "mafoulk", wins: 1, losses: 14, pointsFor: 2282.12, pointsAgainst: 2515.28, division: "Kids Table 2010", current_streak: "L2", trend: "down" }
-];
+// Use canonical 2024 standings and ensure objects match Standing interface used by StandingsTable
+const season2024FinalStandings = season2024Data.standings.map(team => ({
+  ...team,
+  points: team.pointsFor ?? 0,
+  winPercentage: team.wins && (team.wins + team.losses) ? (team.wins / (team.wins + team.losses)) : 0
+}));
 
 // Championship Results
 const championshipResults = {

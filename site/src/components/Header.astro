@@ -10,6 +10,7 @@ try {
   // swallow - keep default week during build
 }
 
+import { NAV_ITEMS } from '../data/nav.js';
 const BASE = import.meta.env.BASE_URL || '/';
 ---
 
@@ -18,9 +19,9 @@ const BASE = import.meta.env.BASE_URL || '/';
     <div class="fff-container-header">
       <div class="fff-header-content">
         <div class="fff-logo-group">
-          <img src={`${BASE}FoulknFootball.png`} alt="FoulknFootball" class="fff-logo-header">
+          <img src={`${BASE}FoulknFootball.png`} alt="Foulk ’n Football" class="fff-logo-header">
           <div>
-            <h1 class="fff-site-name">FoulknFootball</h1>
+            <h1 class="fff-site-name">Foulk ’n Football</h1>
             <p class="fff-tagline">Memento es Foulkrod</p>
           </div>
         </div>
@@ -34,12 +35,9 @@ const BASE = import.meta.env.BASE_URL || '/';
   <nav class="fff-nav-main">
     <div class="fff-container-header">
       <ul class="fff-nav-list">
-  <li><a href={BASE} class="fff-nav-link active">Home</a></li>
-  <li><a href={`${BASE}standings`} class="fff-nav-link">Standings</a></li>
-  <li><a href={`${BASE}matchups`} class="fff-nav-link">Matchups</a></li>
-  <li><a href={`${BASE}teams`} class="fff-nav-link">Teams</a></li>
-  <li><a href={`${BASE}rivalry`} class="fff-nav-link rivalry-link">⚔️ Eternal Rivalry</a></li>
-  <li><a href={`${BASE}history`} class="fff-nav-link">History</a></li>
+        {NAV_ITEMS.filter(i => i.showInHeader).map(item => (
+          <li><a href={`${BASE.replace(/\/$/, '')}${item.href}`} class="fff-nav-link">{item.title}</a></li>
+        ))}
       </ul>
     </div>
   </nav>

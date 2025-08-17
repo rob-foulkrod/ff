@@ -29,6 +29,10 @@ const getTrendIcon = () => {
 ---
 
 <div class="fff-standings-wrapper">
+  <div class="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
+    <strong>Note:</strong> The league's only official divisions are <strong>Kids Table 1985</strong> and <strong>Kids Table 2010</strong>.<br />
+    Any references to Dads or Sons are for fun and do not represent actual divisions.
+  </div>
   <table class="fff-standings-table">
     <thead>
       <tr>
@@ -93,6 +97,55 @@ const getTrendIcon = () => {
     background: white;
   }
 
+  /* Ensure body cells are readable in dark mode by providing explicit foreground
+     color fallbacks and a dark table background when the site is in .dark mode. */
+  .fff-standings-table td {
+    color: var(--fff-text, #111);
+  }
+
+  /* Dark mode: make the table background dark and body text light for contrast */
+  html.dark .fff-standings-table {
+    background: var(--fff-surface-dark, #0b0b0b);
+  }
+
+  html.dark .fff-standings-table td {
+    color: var(--fff-text, #e6e6e6);
+  }
+
+  /* Make PF/PA numbers bolder and brighter in dark mode */
+  html.dark .points-for,
+  html.dark .points-against {
+    color: var(--fff-cream, #f7e7c6);
+    font-weight: 700;
+  }
+
+  /* Dark mode: make win-loss records (e.g. "10-5") stand out and be easier to read */
+  html.dark .fff-standings-table .record {
+    color: var(--fff-text, #f5f5f5);
+    font-weight: 800;
+    text-shadow: 0 1px 0 rgba(0,0,0,0.6);
+    background: rgba(255,255,255,0.02);
+    padding: 0.125rem 0.4rem;
+    border-radius: 0.35rem;
+    display: inline-block;
+    min-width: 3.25rem;
+    text-align: center;
+  }
+
+  /* Slightly dim the separator hyphen so numbers read as pairs but separator doesn't overpower */
+  html.dark .fff-standings-table .record .separator {
+    color: rgba(230,230,230,0.6);
+    margin: 0 0.25rem;
+    font-weight: 600;
+  }
+
+  /* Make wins/losses numbers use the cream accent so they pop in dark mode */
+  html.dark .fff-standings-table .record .wins,
+  html.dark .fff-standings-table .record .losses {
+    color: var(--fff-cream, #f7e7c6);
+    font-weight: 800;
+  }
+
   .fff-standings-table thead {
     background: var(--fff-black);
     color: white;
@@ -155,7 +208,7 @@ const getTrendIcon = () => {
   .record.elite .wins { color: var(--fff-gold); }
   .record.good .wins { color: var(--fff-black); }
   .record.struggling .losses { color: var(--fff-crimson); }
-  /* streak and trend visuals moved to the global theme (site/public/styles/foulknfootball-theme.css)
+  /* streak and trend visuals moved to the global theme (site/public/styles/foulknfootball-theme.css) for Foulk ’n Football
      component now uses .fff-streak-badge and .fff-trend classes */
 
   .crown {

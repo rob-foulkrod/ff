@@ -1,10 +1,11 @@
 ---
+import Footer from '../components/Footer.astro';
 export interface Props {
   title: string;
   description?: string;
 }
 
-const { title, description = 'FoulkNFootball - Where Family Rivalries Meet Fantasy Glory' } = Astro.props;
+const { title, description = 'Foulk ’n Football - Where Family Rivalries Meet Fantasy Glory' } = Astro.props;
 const currentPath = Astro.url.pathname;
 const BASE = import.meta.env.BASE_URL || '/';
 ---
@@ -15,7 +16,7 @@ const BASE = import.meta.env.BASE_URL || '/';
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content={description}>
-  <title>{title} | FoulkNFootball</title>
+  <title>{title} | Foulk ’n Football</title>
   <link rel="icon" type="image/png" href={`${BASE}FoulknFootball.png`}>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -49,23 +50,47 @@ const BASE = import.meta.env.BASE_URL || '/';
       margin: 0 auto;
       padding: 0 1rem;
     }
+    
+    /* Logo sizing: header logo kept modest; footer logo constrained to avoid huge rendering */
+    .fff-logo-image {
+      height: 48px;
+      width: auto;
+      display: inline-block;
+      vertical-align: middle;
+    }
+
+    .fff-footer-logo {
+      display: block;
+      max-width: 220px; /* reasonable max for desktop */
+      width: 35%; /* scale down on larger screens */
+      height: auto;
+      margin: 0.5rem auto; /* center in footer */
+    }
+
+    @media (max-width: 768px) {
+      .fff-footer-logo {
+        max-width: 140px;
+        width: 45%;
+        margin-top: 0.5rem;
+      }
+      .fff-logo-image {
+        height: 40px;
+      }
+    }
   </style>
 </head>
 <body>
   <header class="fff-header backdrop-blur-md bg-white/60 dark:bg-gray-900/60 sticky top-0 z-50">
     <div class="container mx-auto flex justify-between items-center py-3 px-4">
       <a href={BASE} class="fff-logo-container">
-        <img src={`${BASE}FoulknFootball.png`} alt="FoulkNFootball Logo" class="fff-logo-image">
-        <span class="fff-logo-text">FoulkNFootball</span>
+  <img src={`${BASE}FoulknFootball.png`} alt="Foulk ’n Football Logo" class="fff-logo-image">
+  <span class="fff-logo-text">Foulk ’n Football</span>
       </a>
 
       <nav class="flex gap-6 text-sm font-semibold">
         <a href="/ff/" class="nav-link" class:list={[Astro.url.pathname === '/' && 'is-active']}>Home</a>
         <a href="/ff/seasons/2025" class="nav-link" class:list={[Astro.url.pathname.startsWith('/seasons/2025') && 'is-active']}>Current&nbsp;Season</a>
         <a href="/ff/seasons" class="nav-link" class:list={[Astro.url.pathname.startsWith('/seasons') && 'is-active']}>History</a>
-        <a href="/ff/rivalries" class="nav-link" class:list={[Astro.url.pathname.startsWith('/rivalries') && 'is-active']}>Rivalries</a>
-        <a href="/ff/records" class="nav-link" class:list={[Astro.url.pathname.startsWith('/records') && 'is-active']}>Records</a>
-        <a href="/ff/teams" class="nav-link" class:list={[Astro.url.pathname.startsWith('/teams') && 'is-active']}>Teams</a>
       </nav>
 
       <button class="fff-theme-toggle" id="theme-toggle" aria-label="Toggle theme">
@@ -78,16 +103,7 @@ const BASE = import.meta.env.BASE_URL || '/';
     <slot />
   </main>
   
-  <footer class="fff-footer">
-    <div class="container">
-  <img src={`${BASE}FoulknFootball.png`} alt="FoulkNFootball" class="fff-footer-logo">
-      <div class="fff-footer-text">
-        <p>&copy; 2025 FoulkNFootball. All rights reserved.</p>
-        <p class="fff-footer-motto">Memento es Foulkrod</p>
-        <p style="margin-top: 1rem; font-size: 0.75rem;">Data powered by Sleeper API</p>
-      </div>
-    </div>
-  </footer>
+  <Footer />
 
   <script>
     // Theme toggle with better persistence

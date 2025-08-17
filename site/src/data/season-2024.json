@@ -1,0 +1,28 @@
+{
+  "year": 2024,
+  "champion": "CeeDeez Nuts",
+  "championOwner": "jfoulkrod",
+  "runnerUp": "Also too old to run",
+  "runnerUpOwner": "robfoulkrod",
+  "thirdPlace": "GibbMeDaRock",
+  "thirdPlaceOwner": "Dbfoulkrod",
+  "toiletBowlWinner": "BearDown",
+  "toiletBowlOwner": "NOTDada",
+  "standings": [
+    { "rank": 1, "team": "Also too old to run", "owner": "robfoulk", "wins": 12, "losses": 3, "pointsFor": 2856.20, "pointsAgainst": 2544.86, "division": "Kids Table 1985", "current_streak": "W6", "trend": "up" },
+    { "rank": 2, "team": "CeeDeez Nuts", "owner": "jfoulkrod", "wins": 10, "losses": 5, "pointsFor": 2843.28, "pointsAgainst": 2599.24, "division": "Kids Table 2010", "current_streak": "L2", "trend": "down" },
+    { "rank": 3, "team": "GibbMeDaRock", "owner": "Dbfoulkrod", "wins": 10, "losses": 5, "pointsFor": 2777.74, "pointsAgainst": 2609.62, "division": "Kids Table 2010", "current_streak": "W2", "trend": "up" },
+    { "rank": 4, "team": "Chase Brown Tanks", "owner": "ebmookie", "wins": 10, "losses": 5, "pointsFor": 2676.38, "pointsAgainst": 2368.66, "division": "Kids Table 1985", "current_streak": "W3", "trend": "up" },
+    { "rank": 5, "team": "BearDown", "owner": "NOTDada", "wins": 10, "losses": 5, "pointsFor": 2637.90, "pointsAgainst": 2537.36, "division": "Kids Table 2010", "current_streak": "W2", "trend": "up" },
+    { "rank": 6, "team": "Steel City", "owner": "Evenkeel75", "wins": 4, "losses": 11, "pointsFor": 2416.76, "pointsAgainst": 2667.04, "division": "Kids Table 1985", "current_streak": "L6", "trend": "down" },
+    { "rank": 7, "team": "Hawk Tua", "owner": "asmartaleck1", "wins": 3, "losses": 12, "pointsFor": 2360.78, "pointsAgainst": 2775.42, "division": "Kids Table 1985", "current_streak": "L4", "trend": "down" },
+    { "rank": 8, "team": "Code 3", "owner": "mafoulk", "wins": 1, "losses": 14, "pointsFor": 2215.28, "pointsAgainst": 2682.12, "division": "Kids Table 2010", "current_streak": "L2", "trend": "down" }
+  ],
+  "highestScore": 2856.20,
+  "highestScoreTeam": "Also too old to run",
+  "totalWeeks": 15,
+  "playoffWeeks": 3,
+  "weekHighScore": { "week": 15, "team": "robfoulk", "points": 233.54 },
+  "seasonHighScore": { "team": "Unknown", "points": 249.76 },
+  "seasonLowScore": { "team": "Unknown", "points": 107.74 }
+}
