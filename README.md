@@ -1,6 +1,6 @@
 ## Sleeper Weekly Reports
 
-Deterministic, machine-readable weekly Markdown reports for a Sleeper fantasy football league. Includes standings, division standings, playoff picture, head-to-head grid/results, upcoming preview, streaks, and enriched weekly results. Designed to be stable for downstream parsing and safe to regenerate for entire seasons.
+Generate deterministic, machine‑readable weekly reports (Markdown and/or JSON) for a Sleeper fantasy football league. The current modular implementation focuses on core season tracking: metadata, standings, week head‑to‑head results, a lightweight weekly results table (with margin), an optional upcoming week preview, and streaks. Output is stable and safe to regenerate for any range of regular‑season weeks.
 
 ## Quick start
 
@@ -17,13 +17,16 @@ python -m venv .venv
 pip install -r requirements.txt
 ```
 
-3) Generate a weekly report
+3) Generate a weekly report (Markdown default)
 
 ```powershell
 # Single week for a season
 python scripts/weekly_report.py --season 2024 --report-week 11
 
 # The file will be written to: reports/weekly/2024/week-11.md
+
+# Include JSON alongside Markdown
+python scripts/weekly_report.py --season 2024 --report-week 11 --formats markdown,json --json-pretty
 ```
 
 4) Validate reports
@@ -45,8 +48,8 @@ Environment variables (all optional):
 You can place these in a local .env file for convenience. See .env.example for defaults.
 
 Notes
-- Throttling and retries are built-in. The client uses a requests.Session with backoff for transient errors (429/5xx) and a simple min-interval rate limiter.
-- Writes are atomic: the report file is written to a temp file and then replaced.
+- Requests are throttled using an interval (env configurable) with retry/backoff for 429/5xx via the shared client.
+- JSON output schema version is `schema_version` in the payload (also in Metadata table for Markdown).
 
 ## CLI usage
 
@@ -78,23 +81,30 @@ Dry run
 python scripts/weekly_report.py --season 2024 --report-week 11 --dry-run --verbose
 ```
 
-## What’s in the report
+## Report contents (current modular version)
 
-Sections (in order):
-- Metadata: key/value block including schema_version, weeks, counts, and scoring context
-- Roster Directory
-- Weekly Results Week N (with enriched details)
-- Standings Through Week N (includes current_streak and rank_change)
-- Division Standings Through Week N
-- Playoff Standings Through Week N
-  - Two division winners + two best wildcards regardless of division
-  - “In the Hunt”: any non-seeded teams tied in W-L-T with a seeded team
-- Head-to-Head Grid Through Week N (NxN matrix by overall standings)
-- Head-to-Head Results Week N
-- Upcoming Week Preview Week N+1 (sentinel row when out of range)
-- Streaks Through Week N (current + longest win/loss)
+Markdown sections (order):
+1. Title
+2. Metadata (schema_version, generation timestamp, league + season, report_week, start/playoff settings, state_week, same_season flag)
+3. Standings Through Week N (rank, roster_id, W/L/T, win_pct, PF, PA)
+4. (If present) Weekly Results Week N (simple table in JSON only: see below)
+5. (If present) Upcoming Week Preview Week N+1 (only during regular season; omitted/hollow when out of range)
+6. Streaks Through Week N (current streak plus longest win/loss spans)
 
-Output is deterministic and pipes are escaped for parsing. Schema version is centralized in `scripts/lib/constants.py`.
+JSON representation contains:
+- schema_version
+- metadata (flattened key/value list from Metadata section)
+- standings (list of team records through the report week)
+- head_to_head_week (list of matchups for the report week, with points and winner_roster_id/tie)
+- weekly_results_enriched_rows (currently a simplified weekly results list: matchup_id, roster/owner + points, winner, margin)
+- preview (upcoming week matchup roster IDs & owners, when available)
+- streaks_table (current and historical streak information)
+- playoff_rows (placeholder = 0 for now; reserved for future expansion)
+
+Notes:
+- Division standings, playoff seeding, and full head‑to‑head matrix from prior legacy versions have been removed pending redesigned richer modules.
+- Margin is the only enrichment currently retained in weekly_results_enriched_rows.
+- All numeric points and percentages are formatted consistently (see constants for precision).
 
 ## Other utilities
 
@@ -237,8 +247,8 @@ python scripts/validate_reports.py --season 2024
 
 ## Notes
 
-- Playoff logic is: two division winners plus the two best remaining teams irrespective of division. Tied non-seeded teams are appended as “In the Hunt”.
-- Head-to-Head Grid shows W-L or W-L-T; diagonal is “-”, and “--” means not played.
+- Historical weeks: preview section is usually empty (or omitted in JSON) because future matchup data is not yet published.
+- Regular season bounds are derived from league settings (playoff_week_start minus 1).
 
 ## License
 
