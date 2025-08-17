@@ -48,10 +48,7 @@ const rivalryRecord2024 = {
 // Get current champion for special highlighting
 const currentChampion = season2024Data.champion;
 const BASE = import.meta.env.BASE_URL || '/';
-
-// Precompute division winners to use in template
-const winner1985 = season2024Data.standings.find(s => s.division === 'Kids Table 1985');
-const winner2010 = season2024Data.standings.find(s => s.division === 'Kids Table 2010');
+---
 
 <BaseLayout title="League History" description="Foulk ’n Football championship history and dynasty tracker"> 
   <!-- Hero Section with Modern Gradient -->
@@ -169,31 +166,13 @@ const winner2010 = season2024Data.standings.find(s => s.division === 'Kids Table
       <div class="grid md:grid-cols-2 gap-6 mb-12">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border-l-4 border-green-500">
           <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">Kids Table 1985 Winner</h3>
-           {
-             (() => {
-               const winner1985 = season2024Data.standings.find(s => s.division === 'Kids Table 1985');
-               return (
-                 <>
-                   <p class="text-2xl font-black text-gray-900 dark:text-white">{winner1985?.team ?? 'Unknown'}</p>
-                   <p class="text-gray-600 dark:text-gray-400">@{winner1985?.owner ?? 'unknown'}     {winner1985 ? `${winner1985.wins}-${winner1985.losses}` : ''} Record</p>
-                 </>
-               );
-             })()
-           }
+          <p class="text-2xl font-black text-gray-900 dark:text-white">Also too old to run</p>
+          <p class="text-gray-600 dark:text-gray-400">@robfoulk • 12-3 Record</p>
         </div>
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 border-l-4 border-green-500">
           <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 dark:text-gray-400 mb-3">Kids Table 2010 Winner</h3>
-           {
-             (() => {
-               const winner2010 = season2024Data.standings.find(s => s.division === 'Kids Table 2010');
-               return (
-                 <>
-                   <p class="text-2xl font-black text-gray-900 dark:text-white">{winner2010?.team ?? 'Unknown'}</p>
-                   <p class="text-gray-600 dark:text-gray-400">@{winner2010?.owner ?? 'unknown'}     {winner2010 ? `${winner2010.wins}-${winner2010.losses}` : ''} Record</p>
-                 </>
-               );
-             })()
-           }
+          <p class="text-2xl font-black text-gray-900 dark:text-white">CeeDeez Nuts</p>
+          <p class="text-gray-600 dark:text-gray-400">@jfoulkrod • 10-5 Record</p>
         </div>
       </div>
     </div>
