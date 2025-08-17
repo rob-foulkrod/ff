@@ -8,6 +8,8 @@ try {
   leagueData = { seasons: { 2025: { standings: [] }, 2024: { standings: [] } } };
 }
 
+const BASE = import.meta.env.BASE_URL || '/';
+
 // 2024 Season Final Results from Sleeper
 const season2024Champion = "jfoulkrod";
 const season2024ToiletBowlWinner = "NOTDada"; // Gets 1st pick in 2025
@@ -68,7 +70,7 @@ const daysUntilDraft = Math.ceil((draftDate - now) / (1000 * 60 * 60 * 24));
       </div>
 
       <div class="fff-hero-cta">
-        <a href="/seasons/2024" class="fff-btn-hero">
+        <a href={`${BASE}seasons/2024`} class="fff-btn-hero">
           View 2024 Final Results
         </a>
         <a href={`https://sleeper.com/draft/nfl/1180276953741729793`} class="fff-btn-hero-outline" target="_blank" rel="noopener">

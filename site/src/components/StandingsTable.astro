@@ -54,20 +54,25 @@ const getTrendIcon = () => {
               <span>{team.team}</span>
             </div>
           </td>
-          <td class={`record ${getRecordClass(team.wins, team.losses)}`}>
+          <td class={`record ${getRecordClass(team.wins, team.losses)} numeric`}>
             <span class="wins">{team.wins}</span>
             <span class="separator">-</span>
             <span class="losses">{team.losses}</span>
           </td>
-          <td class="points-for">{typeof team.pointsFor === 'number' ? team.pointsFor.toFixed(1) : '—'}</td>
-          <td class="points-against">{typeof team.pointsAgainst === 'number' ? team.pointsAgainst.toFixed(1) : '—'}</td>
+          <td class="points-for numeric">{typeof team.pointsFor === 'number' ? team.pointsFor.toFixed(1) : '—'}</td>
+          <td class="points-against numeric">{typeof team.pointsAgainst === 'number' ? team.pointsAgainst.toFixed(1) : '—'}</td>
           <td class="streak">
-            <span class={`streak-badge ${team.wins > team.losses ? 'hot' : 'cold'}`}>
-              W2
+            <span class="fff-streak-badge" role="status" aria-label={`Current streak ${team.current_streak || 'unknown'}`}>
+              {/* show the raw streak string when available (W6 / L2) */}
+              {team.current_streak || '—'}
             </span>
           </td>
           <td class="trend">
-            <span class="trend-arrow up">{getTrendIcon()}</span>
+            {/* trend: include visual glyph and hidden text for screen readers */}
+            <span class={`fff-trend ${team.trend === 'down' ? 'fff-trend-down' : 'fff-trend-up'}`}>
+              <span aria-hidden="true">{team.trend === 'down' ? '↓' : '↑'}</span>
+              <span class="visually-hidden">Trend: {team.trend === 'down' ? 'falling' : 'rising'}</span>
+            </span>
           </td>
         </tr>
       ))}
@@ -112,7 +117,7 @@ const getTrendIcon = () => {
   }
 
   .fff-team-row.leader {
-    background: linear-gradient(90deg, rgba(212,175,55,0.1) 0%, transparent 100%);
+    background: var(--fff-table-row-hover);
   }
 
   .fff-team-row.playoff {
@@ -150,31 +155,8 @@ const getTrendIcon = () => {
   .record.elite .wins { color: var(--fff-gold); }
   .record.good .wins { color: var(--fff-black); }
   .record.struggling .losses { color: var(--fff-crimson); }
-
-  .streak-badge {
-    padding: 0.25rem 0.75rem;
-    border-radius: 1rem;
-    font-size: 0.875rem;
-    font-weight: 600;
-  }
-
-  .streak-badge.hot {
-    background: var(--fff-gold);
-    color: var(--fff-black);
-  }
-
-  .streak-badge.cold {
-    background: var(--fff-crimson);
-    color: white;
-  }
-
-  .trend-arrow {
-    font-size: 1.25rem;
-    font-weight: 700;
-  }
-
-  .trend-arrow.up { color: #10b981; }
-  .trend-arrow.down { color: #ef4444; }
+  /* streak and trend visuals moved to the global theme (site/public/styles/foulknfootball-theme.css)
+     component now uses .fff-streak-badge and .fff-trend classes */
 
   .crown {
     margin-right: 0.25rem;

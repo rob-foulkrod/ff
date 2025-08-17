@@ -73,6 +73,7 @@ const getWeeklyStats = (content) => {
 };
 
 const weeklyStats = getWeeklyStats(report?.content);
+const BASE = import.meta.env.BASE_URL || '/';
 ---
 
 <BaseLayout title={`${year} Week ${week}`} description={`Week ${week} recap for the ${year} FoulkNFootball season`}>
@@ -97,7 +98,7 @@ const weeklyStats = getWeeklyStats(report?.content);
         )}
       </div>
       
-      <a href={`/seasons/${year}`} class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
+  <a href={`${BASE}seasons/${year}`} class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
         {year} Season
       </a>
       
@@ -168,7 +169,7 @@ const weeklyStats = getWeeklyStats(report?.content);
       <a href={`/seasons/${year}`} class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
         ← Back to {year} Season
       </a>
-      <a href="/seasons" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
+  <a href={`${BASE}seasons`} class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700 transition-colors">
         All Seasons
       </a>
     </div>

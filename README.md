@@ -185,6 +185,36 @@ If CI fails, open the logs for the failing job and apply the suggestions (run th
 - VS Code extensions: Python, Ruff
 - Line endings/formatting are normalized via `.editorconfig`
 
+## Frontend dev (Astro site)
+
+To avoid starting the dev server from the wrong directory, there's a small helper and recommended tasks.
+
+1) Start the dev server (PowerShell helper)
+
+```powershell
+# From repo root (or anywhere)
+powershell -ExecutionPolicy Bypass -File "site\dev.ps1"
+```
+
+2) VS Code task example (add to `.vscode/tasks.json`)
+
+```json
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Site: Start dev server",
+      "type": "shell",
+      "command": "powershell -ExecutionPolicy Bypass -File \"site\\dev.ps1\"",
+      "group": "build",
+      "presentation": { "reveal": "always" }
+    }
+  ]
+}
+```
+
+This ensures the server always starts from `site/` and uses the local `package.json` scripts.
+
 ## Examples (using this league)
 
 ```powershell

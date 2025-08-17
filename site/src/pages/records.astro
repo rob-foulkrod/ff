@@ -112,7 +112,10 @@ const getTrophyEmoji = (place) => {
       <h2 class="text-3xl font-bold mb-6 text-blue-600 dark:text-blue-400">📈 All-Time Standings</h2>
       <div class="bg-white dark:bg-gray-800 rounded-lg shadow overflow-hidden">
         <div class="overflow-x-auto">
-          <table class="w-full">
+          <!-- Screen-reader description for the table -->
+          <p id="alltime-desc" class="sr-only">All-time standings table showing rank, owner, championships, season record, win percentage, and total points sorted by rank.</p>
+          <table class="w-full" aria-describedby="alltime-desc">
+            <caption class="sr-only">All-time standings for the FoulkNFootball league.</caption>
             <thead class="bg-gray-50 dark:bg-gray-700">
               <tr>
                 <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 dark:text-gray-300 uppercase tracking-wider">Rank</th>
@@ -261,7 +264,7 @@ const getTrophyEmoji = (place) => {
       <p class="text-gray-600 dark:text-gray-400 mb-4">
         Know of a record that should be tracked? Let us know!
       </p>
-      <button class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
+      <button type="button" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors">
         Suggest a Record
       </button>
     </section>

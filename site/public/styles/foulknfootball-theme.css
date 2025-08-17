@@ -477,6 +477,70 @@ h1, h2, h3, h4, h5, h6 {
   border-bottom: none;
 }
 
+/* Accessibility & Readability improvements for standings table */
+/* Ensure high contrast text, stronger numeric styles, and accessible badges */
+.fff-table th,
+.fff-table td {
+  color: var(--fff-text);
+  /* make numbers and labels easier to scan */
+  font-size: 0.95rem;
+}
+
+.fff-table td.numeric,
+.fff-table td.numeric strong {
+  font-variant-numeric: tabular-nums;
+  font-weight: 700;
+  color: var(--fff-text);
+}
+
+/* Make streak / badge pills high-contrast and not color-only */
+.fff-streak-badge,
+.fff-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .35ch;
+  padding: .18rem .5rem;
+  border-radius: 999px;
+  font-weight: 700;
+  font-size: 0.85rem;
+  line-height: 1;
+  text-transform: none;
+}
+
+.fff-streak-badge { background: var(--fff-gold-dark); color: #111; }
+.fff-loss-badge { background: var(--fff-crimson); color: var(--fff-cream); }
+
+/* Dark mode badges should invert text color for contrast */
+:root.dark .fff-streak-badge { color: var(--fff-cream); }
+
+/* Trend indicators (use color + glyph + visually hidden text) */
+.fff-trend { display:inline-flex; align-items:center; gap:.35ch; font-weight:700; }
+.fff-trend-up { color: #16a34a; }
+.fff-trend-down { color: #dc2626; }
+
+/* Utility: visually hidden text for screen readers */
+.visually-hidden {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* sr-only is a common helper name used in components/templates; keep as alias */
+.sr-only {
+  position: absolute !important;
+  height: 1px; width: 1px;
+  overflow: hidden; clip: rect(1px, 1px, 1px, 1px);
+  white-space: nowrap; border: 0; padding: 0; margin: -1px;
+}
+
+/* Focus styles for keyboard users */
+.fff-table a:focus,
+.fff-table button:focus {
+  outline: 3px solid rgba(212,175,55,0.35);
+  outline-offset: 2px;
+}
+
 /* Badge Styles */
 .fff-badge {
   display: inline-block;
