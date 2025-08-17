@@ -23,7 +23,6 @@ const StandingsTable: React.FC<StandingsProps> = ({ standings }) => {
     <>
       <div className="text-center text-sm text-gray-600 dark:text-gray-400 mb-4">
         <strong>Note:</strong> The league's only official divisions are <strong>Kids Table 1985</strong> and <strong>Kids Table 2010</strong>.<br />
-        Any references to Dads or Sons are for fun and do not represent actual divisions.
       </div>
       <div className="overflow-x-auto">
       <table className="min-w-full bg-white dark:bg-gray-800 rounded-lg shadow">
