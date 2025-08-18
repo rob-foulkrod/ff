@@ -55,11 +55,11 @@ const htmlContent = report ? marked(report.content) : '';
 // Extract key stats from report content
 const getWeeklyStats = (content) => {
   if (!content) return null;
-  
+
   // Simple parsing for demonstration - in practice, you'd parse more carefully
   const lines = content.split('\n');
   const stats = {};
-  
+
   // Look for highest score
   const highestScoreLine = lines.find(line => line.includes('Highest Score'));
   if (highestScoreLine) {
@@ -68,7 +68,7 @@ const getWeeklyStats = (content) => {
       stats.highestScore = { team: match[1], score: match[2] };
     }
   }
-  
+
   return stats;
 };
 
@@ -97,11 +97,11 @@ const BASE = import.meta.env.BASE_URL || '/';
           <div class="px-4 py-2 text-gray-400">← Week {prevWeek}</div>
         )}
       </div>
-      
+
   <a href={`${BASE}seasons/${year}`} class="bg-blue-600 text-white px-4 py-2 rounded-lg hover:bg-blue-700 transition-colors">
         {year} Season
       </a>
-      
+
       <div>
         {nextWeek ? (
           <a href={`/seasons/${year}/week/${nextWeek}`} class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors">

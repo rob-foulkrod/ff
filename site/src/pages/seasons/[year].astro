@@ -39,7 +39,7 @@ const isComplete = year === '2024';
 const BASE = import.meta.env.BASE_URL || '/';
 ---
 
-<BaseLayout title={`${year} Season`} description={`${year} Foulk ’n Football season results and statistics`}> 
+<BaseLayout title={`${year} Season`} description={`${year} Foulk ’n Football season results and statistics`}>
   <div class="space-y-8">
     <!-- Season Header -->
     <div class="text-center">
@@ -48,7 +48,7 @@ const BASE = import.meta.env.BASE_URL || '/';
         {isCurrent && <span class="text-green-600"> (Current)</span>}
         {isComplete && <span class="text-blue-600"> (Complete)</span>}
       </h1>
-      
+
       {seasonData.standings.length > 0 && (
         <div class="grid md:grid-cols-3 gap-4 max-w-xl mx-auto mt-6">
           <div class="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
@@ -81,7 +81,7 @@ const BASE = import.meta.env.BASE_URL || '/';
         <h2 class="text-3xl font-bold mb-6">📅 Weekly Reports</h2>
         <div class="grid md:grid-cols-3 lg:grid-cols-5 gap-4">
           {weeks.map(week => (
-            <a 
+            <a
               href={`${BASE}seasons/${year}/week/${week}`}
               class="block p-4 bg-white dark:bg-gray-800 rounded-lg shadow hover:shadow-lg transition-shadow border-2 border-transparent hover:border-green-500"
             >
@@ -114,7 +114,7 @@ const BASE = import.meta.env.BASE_URL || '/';
         <h2 class="text-3xl font-bold mb-4 text-blue-800 dark:text-blue-300">🎊 {year} Season Summary</h2>
         <div class="prose dark:prose-invert">
           <p>
-            The {year} season marked another chapter in the ongoing Foulk ’n Football saga. 
+            The {year} season marked another chapter in the ongoing Foulk ’n Football saga.
             {seasonData.standings[0] && `${seasonData.standings[0].team} emerged victorious, `}
             continuing the tradition of intense family competition that has defined this league.
           </p>

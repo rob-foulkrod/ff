@@ -43,9 +43,9 @@ This document collects ideas and proposals to improve the project. Keep entries 
   - Requires a minimal packaging file (`pyproject.toml` or `setup.cfg`)
   - Slight maintenance overhead for packaging metadata
 - Implementation outline:
-  1. Add `pyproject.toml` with project metadata and entry point mapping:  
+  1. Add `pyproject.toml` with project metadata and entry point mapping:
      `[project.scripts]` → `weekly-report = "scripts.weekly_report:main"`
-  2. Optionally add project name and version; keep dependencies minimal (none if not required)  
+  2. Optionally add project name and version; keep dependencies minimal (none if not required)
   3. Install in editable mode: `pip install -e .` (inside the venv)
   4. Run: `weekly-report --season 2024 --all`
   5. Update README with a “CLI” section

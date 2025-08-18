@@ -36,7 +36,7 @@ const daysUntilDraft = Math.ceil((draftDate.getTime() - now.getTime()) / (1000 *
     <div class="fff-hero-content">
       <h1 class="fff-hero-title">Welcome to the Battleground</h1>
       <p class="fff-hero-subtitle">Where Family Pride Meets Fantasy Glory</p>
-      
+
       <div class="fff-hero-cards">
         <div class="fff-leader-card">
           <div class="fff-card-icon">🏆</div>
@@ -85,24 +85,24 @@ const daysUntilDraft = Math.ceil((draftDate.getTime() - now.getTime()) / (1000 *
   function updateCountdown() {
     const now = new Date();
     const draftDate = new Date('2025-08-23T21:00:00Z'); // 5 PM EDT
-    
+
     const diff = draftDate - now;
-    
+
     if (diff > 0) {
       const days = Math.floor(diff / (1000 * 60 * 60 * 24));
       const hours = Math.floor((diff % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       const minutes = Math.floor((diff % (1000 * 60 * 60)) / (1000 * 60));
-      
+
       const daysEl = document.getElementById('days');
       const hoursEl = document.getElementById('hours');
       const minutesEl = document.getElementById('minutes');
-      
+
       if (daysEl) daysEl.textContent = days.toString();
       if (hoursEl) hoursEl.textContent = hours.toString();
       if (minutesEl) minutesEl.textContent = minutes.toString();
     }
   }
-  
+
   updateCountdown();
   setInterval(updateCountdown, 60000); // Update every minute
 </script>
@@ -123,7 +123,7 @@ const daysUntilDraft = Math.ceil((draftDate.getTime() - now.getTime()) / (1000 *
 
   .field-lines {
     height: 100%;
-    background-image: 
+    background-image:
       repeating-linear-gradient(90deg, transparent, transparent 10%, rgba(255,255,255,0.1) 10%, rgba(255,255,255,0.1) 10.5%),
       repeating-linear-gradient(0deg, transparent, transparent 20%, rgba(255,255,255,0.05) 20%, rgba(255,255,255,0.05) 21%);
   }

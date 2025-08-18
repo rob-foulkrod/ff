@@ -1,32 +1,34 @@
-"""Pure compute helpers used by report generation.
-
-These functions are side-effect free and operate on already-fetched matchup
-data grouped by week, enabling reuse across sections and easier unit testing.
-"""
 from __future__ import annotations
 
-# Pure helpers copied from weekly_report with identical behavior
-
+def _coerce_int(value: object, default: int = 0) -> int:
+    """Best‑effort int conversion (supports int, float, str of digits)."""
+    if value is None:
+        return default
+    if isinstance(value, bool):  # bool is subclass of int; handle explicitly if undesired
+        return int(value)
+    if isinstance(value, int | float):
+        return int(value)
+    if isinstance(value, str):
+        try:
+            return int(value)
+        except ValueError:
+            return default
+    return default
 
 def group_rows(rows: list[dict]) -> dict[int, list[dict]]:
-    """Group raw matchup rows by matchup_id, synthesizing ids when missing.
-
-    When Sleeper rows omit ``matchup_id``, create a per-roster synthetic id to
-    preserve rows without forcing pairing assumptions.
-    """
     groups: dict[int, list[dict]] = {}
     for row in rows or []:
-        mid = row.get("matchup_id")
-        if mid is None:
-            mid = -100000 - row.get("roster_id", 0)
-        groups.setdefault(int(mid), []).append(row)
+        mid_raw = row.get("matchup_id")
+        if mid_raw is None:
+            # Create deterministic synthetic id using roster_id when missing
+            rid_int = _coerce_int(row.get("roster_id"), 0)
+            mid = -100000 - rid_int
+        else:
+            mid = _coerce_int(mid_raw, -1)
+        groups.setdefault(mid, []).append(row)
     return groups
 
-
-def compute_standings_with_groups(
-    weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int
-) -> list[dict]:
-    """Accumulate W/L/T and points for/against for each roster across weeks."""
+def compute_standings_with_groups(weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int) -> list[dict]:
     records: dict[int, dict] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         groups = weekly_groups.get(wk, {})
@@ -34,71 +36,52 @@ def compute_standings_with_groups(
             if len(entries) == 2:
                 a, b = entries[0], entries[1]
                 for e in (a, b):
-                    rid = int(e.get("roster_id"))
-                    rec = records.setdefault(
-                        rid,
-                        {
-                            "roster_id": rid,
-                            "wins": 0,
-                            "losses": 0,
-                            "ties": 0,
-                            "points_for": 0.0,
-                            "points_against": 0.0,
-                        },
-                    )
+                    rid_raw = e.get("roster_id")
+                    if rid_raw is None:
+                        # Skip malformed entry without roster id
+                        continue
+                    rid = _coerce_int(rid_raw, -1)
+                    rec = records.setdefault(rid, {"roster_id": rid, "wins": 0, "losses": 0, "ties": 0, "points_for": 0.0, "points_against": 0.0})
                     opp = b if e is a else a
                     rec["points_for"] += float(e.get("points", 0) or 0)
                     rec["points_against"] += float(opp.get("points", 0) or 0)
                 ap = float(a.get("points", 0) or 0)
                 bp = float(b.get("points", 0) or 0)
+                a_rid_raw = a.get("roster_id")
+                b_rid_raw = b.get("roster_id")
+                if a_rid_raw is None or b_rid_raw is None:
+                    # Cannot assign win/loss without both roster ids
+                    continue
+                a_rid = _coerce_int(a_rid_raw, -1)
+                b_rid = _coerce_int(b_rid_raw, -1)
                 if ap > bp:
-                    records[int(a.get("roster_id"))]["wins"] += 1
-                    records[int(b.get("roster_id"))]["losses"] += 1
+                    records[a_rid]["wins"] += 1
+                    records[b_rid]["losses"] += 1
                 elif bp > ap:
-                    records[int(b.get("roster_id"))]["wins"] += 1
-                    records[int(a.get("roster_id"))]["losses"] += 1
+                    records[b_rid]["wins"] += 1
+                    records[a_rid]["losses"] += 1
                 else:
-                    records[int(a.get("roster_id"))]["ties"] += 1
-                    records[int(b.get("roster_id"))]["ties"] += 1
+                    records[a_rid]["ties"] += 1
+                    records[b_rid]["ties"] += 1
             else:
                 total_points = [float(e.get("points", 0) or 0) for e in entries]
                 for i, e in enumerate(entries):
-                    rid = int(e.get("roster_id"))
-                    rec = records.setdefault(
-                        rid,
-                        {
-                            "roster_id": rid,
-                            "wins": 0,
-                            "losses": 0,
-                            "ties": 0,
-                            "points_for": 0.0,
-                            "points_against": 0.0,
-                        },
-                    )
+                    rid_raw = e.get("roster_id")
+                    if rid_raw is None:
+                        continue
+                    rid = _coerce_int(rid_raw, -1)
+                    rec = records.setdefault(rid, {"roster_id": rid, "wins": 0, "losses": 0, "ties": 0, "points_for": 0.0, "points_against": 0.0})
                     rec["points_for"] += total_points[i]
                     rec["points_against"] += sum(total_points) - total_points[i]
-
     table = []
     for rid, rec in records.items():
         g = rec["wins"] + rec["losses"] + rec["ties"]
         win_pct = (rec["wins"] + 0.5 * rec["ties"]) / g if g else 0.0
-        table.append(
-            {
-                **rec,
-                "games": g,
-                "win_pct": round(win_pct, 4),
-                "points_for": round(rec["points_for"], 2),
-                "points_against": round(rec["points_against"], 2),
-            }
-        )
+        table.append({**rec, "games": g, "win_pct": round(win_pct, 4), "points_for": round(rec["points_for"], 2), "points_against": round(rec["points_against"], 2)})
     table.sort(key=lambda r: (-r["win_pct"], -r["points_for"], r["roster_id"]))
     return table
 
-
-def compute_weekly_results(
-    weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int
-) -> dict[int, list[tuple[int, str]]]:
-    """Return per-roster sequences of (week, result) using only two-team matchups."""
+def compute_weekly_results(weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int) -> dict[int, list[tuple[int, str]]]:
     results: dict[int, list[tuple[int, str]]] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         groups = weekly_groups.get(wk, {})
@@ -108,20 +91,24 @@ def compute_weekly_results(
             a, b = entries
             ap = float(a.get("points", 0) or 0)
             bp = float(b.get("points", 0) or 0)
+            a_rid_raw = a.get("roster_id")
+            b_rid_raw = b.get("roster_id")
+            if a_rid_raw is None or b_rid_raw is None:
+                continue
+            a_rid = _coerce_int(a_rid_raw, -1)
+            b_rid = _coerce_int(b_rid_raw, -1)
             if ap > bp:
-                results.setdefault(int(a.get("roster_id")), []).append((wk, "W"))
-                results.setdefault(int(b.get("roster_id")), []).append((wk, "L"))
+                results.setdefault(a_rid, []).append((wk, "W"))
+                results.setdefault(b_rid, []).append((wk, "L"))
             elif bp > ap:
-                results.setdefault(int(b.get("roster_id")), []).append((wk, "W"))
-                results.setdefault(int(a.get("roster_id")), []).append((wk, "L"))
+                results.setdefault(b_rid, []).append((wk, "W"))
+                results.setdefault(a_rid, []).append((wk, "L"))
             else:
-                results.setdefault(int(a.get("roster_id")), []).append((wk, "T"))
-                results.setdefault(int(b.get("roster_id")), []).append((wk, "T"))
+                results.setdefault(a_rid, []).append((wk, "T"))
+                results.setdefault(b_rid, []).append((wk, "T"))
     return results
 
-
 def current_streak(res_list: list[tuple[int, str]], through_week: int) -> tuple[str, int, int, int]:
-    """Compute current W/L streak up to a week; ties break streaks."""
     filtered = [t for t in res_list if t[0] <= through_week]
     if not filtered:
         return ("none", 0, 0, through_week)
@@ -144,11 +131,7 @@ def current_streak(res_list: list[tuple[int, str]], through_week: int) -> tuple[
         return ("none", 0, 0, through_week)
     return (streak_type, length, start_wk, through_week)
 
-
-def longest_streaks(
-    res_list: list[tuple[int, str]], through_week: int
-) -> tuple[tuple[int, str], tuple[int, str]]:
-    """Compute longest win and loss streaks with span labels like 'w2-w5'."""
+def longest_streaks(res_list: list[tuple[int, str]], through_week: int) -> tuple[tuple[int, str], tuple[int, str]]:
     filtered = [t for t in res_list if t[0] <= through_week]
     best_win = (0, "-")
     best_loss = (0, "-")

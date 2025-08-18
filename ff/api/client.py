@@ -1,12 +1,11 @@
 from __future__ import annotations
-
-# ...existing code copied from scripts.lib.client...
-import os, time
+import os
+import time
 from typing import Any
 import requests
+from ff.report.constants import DEFAULT_MIN_INTERVAL_SEC
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
-from ff.report.constants import DEFAULT_MIN_INTERVAL_SEC
 
 class RateLimiter:
     def __init__(self, min_interval_sec: float | None = None) -> None:

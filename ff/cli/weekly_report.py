@@ -1,4 +1,3 @@
-# moved from python/cli/weekly_report.py
 from __future__ import annotations
 
 import argparse
@@ -8,45 +7,22 @@ import sys
 from pathlib import Path
 from typing import Any, Iterable, Sequence
 
-# Ensure source root ('python/' containing the 'ff' package) is on sys.path when executed directly
-_THIS_FILE = Path(__file__).resolve()
-# Path depth: .../python/ff/cli/weekly_report.py -> parents[0]=cli,1=ff(pckg),2=python
-_SRC_ROOT = _THIS_FILE.parents[2]  # .../python
-_REPO_ROOT = _THIS_FILE.parents[3]  # repo root (may be needed for editable installs)
-for _p in (str(_SRC_ROOT), str(_REPO_ROOT)):
-    if _p not in sys.path:
-        sys.path.insert(0, _p)
-
 import requests
 
-try:  # pragma: no cover - import resolution flexibility
-    from ff.report.constants import SCHEMA_VERSION  # type: ignore
-    from ff.report.collect import (  # type: ignore
-        build_weekly_context as _build_weekly_context_mod,
-        _resolve_league_for_season as _resolve_league_for_season_mod,
-    )
-    from ff.report.formatters import (  # type: ignore
-        format_markdown as _format_markdown_mod,
-        format_json as _format_json_mod,
-    )
-except ImportError:  # fallback if run differently
-    from ff.report.constants import SCHEMA_VERSION
-    from ff.report.collect import (
-        build_weekly_context as _build_weekly_context_mod,
-        _resolve_league_for_season as _resolve_league_for_season_mod,
-    )
-    from ff.report.formatters import (
-        format_markdown as _format_markdown_mod,
-        format_json as _format_json_mod,
-    )
+from ff.report.constants import SCHEMA_VERSION
+from ff.report.collect import (
+    build_weekly_context as _build_weekly_context_mod,
+    _resolve_league_for_season as _resolve_league_for_season_mod,
+)
+from ff.report.formatters import (
+    format_markdown as _format_markdown_mod,
+    format_json as _format_json_mod,
+)
 
 LEAGUE_ID = os.environ.get("SLEEPER_LEAGUE_ID", "1180276953741729792")
 SPORT = os.environ.get("SLEEPER_SPORT", "nfl")
 
 
-# ---------------------------------------------------------------------------
-# Helpers
-# ---------------------------------------------------------------------------
 def _pretty(data: Any) -> str:
     return json.dumps(data, indent=2, sort_keys=True)
 
@@ -59,10 +35,6 @@ def _iter_weeks(
     to_week: int | None,
     include_all: bool,
 ) -> Iterable[int]:
-    """Yield week numbers for a requested range.
-
-    Handles --all, --from-week / --to-week permutations, normalizing bounds.
-    """
     if not (include_all or from_week is not None or to_week is not None):
         return []
     w1 = from_week if from_week is not None else start_week
@@ -86,10 +58,6 @@ def generate_weekly_history_report(
     verbose: bool = False,
     dry_run: bool = False,
 ) -> dict:
-    """Generate a weekly history report and write selected output formats.
-
-    Returns a summary dictionary with file paths and simple counts.
-    """
     formats = list(output_formats) if output_formats else ["markdown"]
     ctx = _build_weekly_context_mod(
         league_id=league_id, season=season, report_week=report_week, sport=sport
@@ -141,7 +109,7 @@ def generate_weekly_history_report(
     }
 
 
-def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
+def main(argv: list[str] | None = None) -> int:  # pragma: no cover
     parser = argparse.ArgumentParser(
         description="Generate Sleeper weekly history report (machine-readable markdown)"
     )
@@ -180,7 +148,6 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
         default="markdown",
         help="Comma-separated list of output formats (markdown,json)",
     )
-    # JSON formatting flags: pretty now default; allow opt-out for compact
     parser.set_defaults(json_pretty=True)
     parser.add_argument(
         "--json-pretty",
@@ -197,7 +164,6 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
     args = parser.parse_args(argv)
     formats = [f.strip() for f in args.formats.split(",") if f.strip()]
 
-    # Multi-week range path
     if args.all or args.from_week is not None or args.to_week is not None:
         try:
             league = _resolve_league_for_season_mod(args.league_id, args.season)
@@ -236,15 +202,10 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
                     )
                     for fmt_name, info in summary["formats"].items():
                         print(f"OK  Week {wk:02d} [{fmt_name}] -> {info['path']}")
-                except requests.HTTPError as e:  # pragma: no cover - variability
+                except requests.HTTPError as e:  # pragma: no cover
                     failures += 1
                     print(f"HTTPError on week {wk}: {e}", file=sys.stderr)
-                    if e.response is not None:
-                        try:
-                            print(_pretty(e.response.json()), file=sys.stderr)
-                        except (ValueError, json.JSONDecodeError):
-                            print(e.response.text[:2000], file=sys.stderr)
-                except (OSError, ValueError) as e:  # defensive subset
+                except (OSError, ValueError) as e:  # pragma: no cover
                     failures += 1
                     print(f"Error on week {wk}: {e}", file=sys.stderr)
             if failures:
@@ -252,19 +213,13 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
                 return 1
             print("All reports generated successfully.")
             return 0
-        except requests.HTTPError as e:
+        except requests.HTTPError as e:  # pragma: no cover
             print(f"HTTPError: {e}", file=sys.stderr)
-            if e.response is not None:
-                try:
-                    print(_pretty(e.response.json()), file=sys.stderr)
-                except (ValueError, json.JSONDecodeError):
-                    print(e.response.text[:2000], file=sys.stderr)
             return 1
-        except (OSError, ValueError) as e:
+        except (OSError, ValueError) as e:  # pragma: no cover
             print(f"Error: {e}", file=sys.stderr)
             return 1
 
-    # Single week path
     try:
         summary = generate_weekly_history_report(
             league_id=args.league_id,
@@ -281,18 +236,14 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
         for fmt_name, info in summary["formats"].items():
             print(f"Wrote [{fmt_name}]: {info['path']}")
         return 0
-    except requests.HTTPError as e:
+    except requests.HTTPError as e:  # pragma: no cover
         print(f"HTTPError: {e}", file=sys.stderr)
-        if e.response is not None:
-            try:
-                print(_pretty(e.response.json()), file=sys.stderr)
-            except (ValueError, json.JSONDecodeError):
-                print(e.response.text[:2000], file=sys.stderr)
         return 1
-    except (OSError, ValueError) as e:  # pragma: no cover - defensive subset
+    except (OSError, ValueError) as e:  # pragma: no cover
         print(f"Error: {e}", file=sys.stderr)
         return 1
 
 
-if __name__ == "__main__":  # pragma: no cover - CLI entry
+if __name__ == "__main__":  # pragma: no cover
     raise SystemExit(main())
+

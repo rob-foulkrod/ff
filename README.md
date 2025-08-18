@@ -14,25 +14,40 @@ Generate deterministic, machine‑readable weekly reports (Markdown and/or JSON)
 # From repo root
 python -m venv .venv
 . .\.venv\Scripts\Activate.ps1
-pip install -r requirements.txt
+
+# Editable install (package) + dev tools & test deps via extras
+pip install -e .[dev]
+
+# (Legacy alternative removed) Previously used requirements.txt; now use extras only.
 ```
 
 3) Generate a weekly report (Markdown default)
 
 ```powershell
-# Single week for a season (new packaged CLI)
+# Single week for a season (installed console script)
 weekly-report --season 2024 --report-week 11
 
-# Or via Python module (develop mode)
-python -m cli.weekly_report --season 2024 --report-week 11
+# Or via Python module (development / editable install)
+python -m ff.cli.weekly_report --season 2024 --report-week 11
 
 # The file will be written to: reports/weekly/2024/week-11.md
 
-# Include JSON alongside Markdown (pretty JSON is now the default)
+# Include JSON alongside Markdown (pretty JSON is the default)
 weekly-report --season 2024 --report-week 11 --formats markdown,json
 
 # Generate compact JSON instead of pretty
 weekly-report --season 2024 --report-week 11 --formats json --json-compact
+
+# (Automation) Generate a range or list using the helper script
+python scripts/generate_reports.py --season 2024 --range 1-4 --formats markdown,json
+python scripts/generate_reports.py --season 2024 --weeks 1,3,7 --formats json
+
+# Specify a different league id (e.g., new 2025 league) explicitly
+weekly-report --league-id 123456789012345678 --season 2025 --report-week 1
+
+# Or set env var (persists for the session)
+$Env:SLEEPER_LEAGUE_ID="123456789012345678"
+weekly-report --season 2025 --all --formats markdown,json
 ```
 
 4) Validate reports
@@ -150,10 +165,10 @@ python -m venv .venv
 . .\.venv\Scripts\Activate.ps1
 ```
 
-2) Install runtime dependencies (already used by the scripts and tests)
+2) Install runtime + dev dependencies
 
 ```powershell
-pip install -r requirements.txt
+pip install -e .[dev]
 ```
 
 3) Install dev tools (formatter, linter, type checker, and commit hooks)

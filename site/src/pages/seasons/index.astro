@@ -50,23 +50,23 @@ const currentChampion = season2024Data.champion;
 const BASE = import.meta.env.BASE_URL || '/';
 ---
 
-<BaseLayout title="League History" description="Foulk ’n Football championship history and dynasty tracker"> 
+<BaseLayout title="League History" description="Foulk ’n Football championship history and dynasty tracker">
   <!-- Hero Section with Modern Gradient -->
   <section class="relative overflow-hidden bg-gradient-to-br from-emerald-900 via-green-800 to-emerald-900 text-white">
     <div class="absolute inset-0 bg-black/30"></div>
     <div class="absolute inset-0" style={`background-image: url('${BASE}field-pattern.svg')`} aria-hidden="true" />
-    
+
     <div class="relative z-10 container mx-auto px-4 py-16 text-center">
       <div class="inline-flex items-center gap-2 px-4 py-2 bg-yellow-500/20 backdrop-blur-sm rounded-full mb-6">
         <span class="text-yellow-400">🏆</span>
         <span class="text-sm font-bold text-yellow-400 uppercase tracking-wider">Season 2024 Complete</span>
       </div>
-      
+
       <h1 class="text-6xl md:text-7xl font-black mb-4">
         <span class="block text-3xl md:text-4xl font-normal text-yellow-400 mb-2">Hall of</span>
         <span class="bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-400 bg-clip-text text-transparent">CHAMPIONS</span>
       </h1>
-      
+
       <p class="text-xl text-gray-200 max-w-2xl mx-auto mb-8">
         Where family rivalries become legends and every season writes a new chapter
       </p>
@@ -89,7 +89,7 @@ const BASE = import.meta.env.BASE_URL || '/';
       <h2 class="text-4xl font-black text-center mb-12 bg-gradient-to-r from-green-600 to-emerald-600 bg-clip-text text-transparent">
         2024 Season Finals
       </h2>
-      
+
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
         <!-- Champion Card -->
         <div class="group relative">
@@ -182,7 +182,7 @@ const BASE = import.meta.env.BASE_URL || '/';
   <section class="py-16 bg-white dark:bg-gray-800">
     <div class="container mx-auto px-4">
       <h2 class="text-4xl font-black text-center mb-12">Final Standings</h2>
-      
+
       <div class="bg-gray-50 dark:bg-gray-900 rounded-2xl overflow-hidden shadow-2xl">
         <div class="overflow-x-auto">
           <table class="w-full">
@@ -235,19 +235,19 @@ const BASE = import.meta.env.BASE_URL || '/';
                     {team.pointsFor.toFixed(2)}
                   </td>
                   <td class="px-6 py-4 text-center">
-                    {team.owner === season2024Data.championOwner && 
+                    {team.owner === season2024Data.championOwner &&
                       <span class="px-3 py-1 bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-300 rounded-full text-sm font-bold">🏆 Champion</span>
                     }
-                    {team.owner === season2024Data.runnerUpOwner && 
+                    {team.owner === season2024Data.runnerUpOwner &&
                       <span class="px-3 py-1 bg-gray-100 text-gray-800 dark:bg-gray-700 dark:text-gray-300 rounded-full text-sm font-bold">🥈 Runner-Up</span>
                     }
-                    {team.owner === season2024Data.thirdPlaceOwner && 
+                    {team.owner === season2024Data.thirdPlaceOwner &&
                       <span class="px-3 py-1 bg-amber-100 text-amber-800 dark:bg-amber-900/30 dark:text-amber-300 rounded-full text-sm font-bold">🥉 3rd Place</span>
                     }
-                    {team.owner === season2024Data.toiletBowlOwner && 
+                    {team.owner === season2024Data.toiletBowlOwner &&
                       <span class="px-3 py-1 bg-blue-100 text-blue-800 dark:bg-blue-900/30 dark:text-blue-300 rounded-full text-sm font-bold">🚽 1st Pick</span>
                     }
-                    {team.rank > 5 && 
+                    {team.rank > 5 &&
                       <span class="text-sm text-gray-500">Missed Playoffs</span>
                     }
                   </td>
@@ -264,11 +264,11 @@ const BASE = import.meta.env.BASE_URL || '/';
   <section class="py-16 bg-gradient-to-br from-red-900 via-red-800 to-orange-900 text-white relative overflow-hidden">
     <div class="absolute inset-0 bg-black/40"></div>
   <div class="absolute inset-0" style={`background-image: url('${BASE}versus-pattern.svg')`} aria-hidden="true" />
-    
+
     <div class="relative z-10 container mx-auto px-4">
       <h2 class="text-5xl font-black text-center mb-4">The Eternal Rivalry</h2>
       <p class="text-xl text-center text-red-200 mb-12">Father vs. Son • 2024 Season</p>
-      
+
       <div class="flex flex-col lg:flex-row items-center justify-center gap-8">
         <!-- Rob's Card -->
         <div class="bg-white/10 backdrop-blur-md rounded-2xl p-8 border-2 border-white/20 hover:scale-105 transition-transform">
@@ -338,7 +338,7 @@ const BASE = import.meta.env.BASE_URL || '/';
       <h2 class="text-4xl font-black text-center mb-12 bg-gradient-to-r from-purple-600 to-pink-600 bg-clip-text text-transparent">
         Season Highlights
       </h2>
-      
+
       <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 text-center hover:scale-105 transition-transform">
           <div class="text-4xl mb-3">📊</div>
@@ -346,21 +346,21 @@ const BASE = import.meta.env.BASE_URL || '/';
           <p class="text-3xl font-black text-gray-900 dark:text-white">249.76</p>
           <p class="text-sm text-gray-600 dark:text-gray-400">Single Week Record</p>
         </div>
-        
+
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 text-center hover:scale-105 transition-transform">
           <div class="text-4xl mb-3">🔥</div>
           <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Week 15 High</h3>
           <p class="text-3xl font-black text-gray-900 dark:text-white">233.54</p>
           <p class="text-sm text-gray-600 dark:text-gray-400">@robfoulk</p>
         </div>
-        
+
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 text-center hover:scale-105 transition-transform">
           <div class="text-4xl mb-3">🎯</div>
           <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Longest Win Streak</h3>
           <p class="text-3xl font-black text-gray-900 dark:text-white">6 Games</p>
           <p class="text-sm text-gray-600 dark:text-gray-400">@robfoulk (W10-W15)</p>
         </div>
-        
+
         <div class="bg-white dark:bg-gray-800 rounded-xl p-6 text-center hover:scale-105 transition-transform">
           <div class="text-4xl mb-3">💥</div>
           <h3 class="text-sm font-bold uppercase tracking-wider text-gray-500 mb-2">Biggest Blowout</h3>
@@ -445,11 +445,11 @@ const BASE = import.meta.env.BASE_URL || '/';
     h1 {
       font-size: 2.5rem;
     }
-    
+
     h2 {
       font-size: 2rem;
     }
-    
+
     table {
       font-size: 0.875rem;
     }

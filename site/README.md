@@ -47,7 +47,7 @@ ff/
 │   ├── validate_sleeper_api.py     # API validation
 │   └── lib/                        # Core libraries
 ├── reports/weekly/2024/            # Generated markdown reports
-└── requirements.txt                # Python dependencies
+└── pyproject.toml                  # Python package & dependency metadata
 ```
 
 ## 🎨 Features
@@ -93,7 +93,7 @@ The site centers around the ongoing battle between generations:
 - Dave Koz (`DaveKoz`) - Consistent performer
 - Eric K (`Eric_K`) - Wildcard with surprising upsets
 
-### � The Sons  
+### � The Sons
 - Jake Foulk (`jfoulkrod`) - Rising star and defending champion
 - Devin Battles (`devinbattles`) - Young gun with championship aspirations
 - Michael Koz (`michaelkoz`) - Future potential waiting to be unlocked

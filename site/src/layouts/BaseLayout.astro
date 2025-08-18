@@ -30,19 +30,19 @@ const BASE = import.meta.env.BASE_URL || '/';
       border-style: solid;
       border-color: #e5e7eb;
     }
-    
+
     html {
       line-height: 1.5;
       -webkit-text-size-adjust: 100%;
       -moz-tab-size: 4;
       tab-size: 4;
     }
-    
+
     body {
       margin: 0;
       line-height: inherit;
     }
-    
+
     /* Container */
     .container {
       width: 100%;
@@ -50,7 +50,7 @@ const BASE = import.meta.env.BASE_URL || '/';
       margin: 0 auto;
       padding: 0 1rem;
     }
-    
+
     /* Logo sizing: header logo kept modest; footer logo constrained to avoid huge rendering */
     .fff-logo-image {
       height: 48px;
@@ -98,18 +98,18 @@ const BASE = import.meta.env.BASE_URL || '/';
       </button>
     </div>
   </header>
-  
+
   <main>
     <slot />
   </main>
-  
+
   <Footer />
 
   <script>
     // Theme toggle with better persistence
     const themeToggle = document.getElementById('theme-toggle');
     const themeIcon = themeToggle?.querySelector('.theme-icon');
-    
+
     function setTheme(isDark) {
       if (isDark) {
         document.documentElement.classList.add('dark');
@@ -120,12 +120,12 @@ const BASE = import.meta.env.BASE_URL || '/';
       }
       localStorage.setItem('theme', isDark ? 'dark' : 'light');
     }
-    
+
     // Initialize theme
     const savedTheme = localStorage.getItem('theme');
     const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
     setTheme(savedTheme === 'dark' || (!savedTheme && prefersDark));
-    
+
     themeToggle?.addEventListener('click', () => {
       const isDark = document.documentElement.classList.contains('dark');
       setTheme(!isDark);

@@ -40,7 +40,7 @@ const StandingsTable: React.FC<StandingsProps> = ({ standings }) => {
           {standings.map((team, index) => {
             const winPct = calculateWinPct(team.wins, team.losses, team.ties);
             const record = team.ties ? `${team.wins}-${team.losses}-${team.ties}` : `${team.wins}-${team.losses}`;
-            
+
             return (
               <tr key={team.rosterId} className="border-b dark:border-gray-700 hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors">
                 <td className="px-4 py-3 font-bold text-lg">{index + 1}</td>

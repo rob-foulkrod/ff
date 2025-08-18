@@ -33,7 +33,7 @@ function parseMarkdownTable(content, startMarker, endMarker = null) {
         }
         if (!isMainStandings) continue;
       }
-      
+
       // Look for the actual table header (starts with |)
       for (let j = i; j < lines.length; j++) {
         if (lines[j].trim().startsWith('|') && lines[j].includes('|')) {
@@ -67,7 +67,7 @@ function parseMarkdownTable(content, startMarker, endMarker = null) {
     }
   }
 
-  const tableLines = lines.slice(startIndex, endIndex).filter(line => 
+  const tableLines = lines.slice(startIndex, endIndex).filter(line =>
     line.trim().startsWith('|') && !line.includes('---')
   );
 
@@ -111,7 +111,7 @@ function parseMarkdownTable(content, startMarker, endMarker = null) {
 function parseReportMetadata(content) {
   const metadata = {};
   const metadataMatch = content.match(/## Metadata\n(.*?)\n\n/s);
-  
+
   if (metadataMatch) {
     const metadataLines = metadataMatch[1].split('\n');
     for (const line of metadataLines) {
@@ -123,14 +123,14 @@ function parseReportMetadata(content) {
       }
     }
   }
-  
+
   return metadata;
 }
 
 // Read all report files and organize by season/week
 function readReports() {
   const reports = {};
-  
+
   if (!fs.existsSync(REPORTS_DIR)) {
     console.log('⚠️  Reports directory not found:', REPORTS_DIR);
     return reports;
@@ -148,7 +148,7 @@ function readReports() {
   years.forEach(year => {
     const yearPath = path.join(REPORTS_DIR, year);
     console.log(`🔍 Reading year directory: ${yearPath}`);
-    
+
     const weekFiles = fs.readdirSync(yearPath)
       .filter(file => file.startsWith('week-') && file.endsWith('.md'))
       .sort((a, b) => {
@@ -169,16 +169,16 @@ function readReports() {
         const week = weekMatch[1];
         const filePath = path.join(yearPath, file);
         console.log(`📖 Reading ${file} from ${filePath}`);
-        
+
         try {
           const content = fs.readFileSync(filePath, 'utf-8');
-          
+
           // Parse the report data
           const metadata = parseReportMetadata(content);
           const standings = parseMarkdownTable(content, '## Standings Through Week');
           const weeklyResults = parseMarkdownTable(content, '## Weekly Results Week');
           const headToHead = parseMarkdownTable(content, '## Head-to-Head Grid Through Week');
-          
+
           reports[year][week] = {
             content: content,
             metadata: metadata,
@@ -189,7 +189,7 @@ function readReports() {
             week: parseInt(week),
             year: parseInt(year)
           };
-          
+
           console.log(`✅ Processed Week ${week} - Standings: ${standings.length}, H2H: ${headToHead.length}`);
         } catch (error) {
           console.error(`❌ Error reading ${file}:`, error.message);
@@ -209,22 +209,22 @@ function extractSeasonStandings(reports) {
     // Get the highest week number (last week of season)
     const weeks = Object.keys(yearReports).map(w => parseInt(w)).sort((a, b) => b - a);
     const lastWeek = weeks[0];
-    
+
     if (lastWeek && yearReports[lastWeek] && yearReports[lastWeek].standings) {
       // Filter to unique teams only (avoid duplicates from division/playoff tables)
       const uniqueTeams = [];
       const seenOwners = new Set();
-      
+
       yearReports[lastWeek].standings.forEach(team => {
         if (team.owner && !seenOwners.has(team.owner) && team.owner !== 'owner') {
           seenOwners.add(team.owner);
           uniqueTeams.push(team);
         }
       });
-      
+
       // Take only first 8 teams (standard league size)
       const finalStandings = uniqueTeams.slice(0, 8);
-      
+
       seasons[year] = {
         standings: finalStandings.map((team, index) => ({
           rank: team.rank || index + 1,
@@ -249,7 +249,7 @@ function extractSeasonStandings(reports) {
 function getDisplayName(username) {
   const nameMap = {
     'robfoulk': 'Rob',
-    'jfoulkrod': 'Jake', 
+    'jfoulkrod': 'Jake',
     'Evenkeel75': 'Brian',
     'Dbfoulkrod': 'Devin',
     'asmartaleck1': 'Dave',
@@ -265,7 +265,7 @@ function getFamilyStructure() {
   return {
     dads: [
       { name: 'Rob', username: 'robfoulk', role: 'League Veteran' },
-      { name: 'Brian', username: 'Evenkeel75', role: 'Strategic Mind' }, 
+      { name: 'Brian', username: 'Evenkeel75', role: 'Strategic Mind' },
       { name: 'Dave', username: 'asmartaleck1', role: 'Consistent Performer' },
       { name: 'Eric', username: 'ebmookie', role: 'Wildcard' }
     ],
@@ -281,7 +281,7 @@ function getFamilyStructure() {
 // Calculate head-to-head records across all weeks
 function calculateHeadToHeadRecords(reports) {
   const h2hRecords = {};
-  
+
   for (const [year, yearReports] of Object.entries(reports)) {
     for (const [week, report] of Object.entries(yearReports)) {
       if (report.weeklyResults) {
@@ -293,7 +293,7 @@ function calculateHeadToHeadRecords(reports) {
       }
     }
   }
-  
+
   return h2hRecords;
 }
 
@@ -302,16 +302,16 @@ async function main() {
   try {
     console.log('📖 Reading weekly reports...');
     const reports = readReports();
-    
+
     console.log('🏆 Extracting season standings...');
     const seasons = extractSeasonStandings(reports);
-    
+
     console.log('👨‍👦 Setting up family structure...');
     const family = getFamilyStructure();
-    
+
     console.log('⚔️ Calculating head-to-head records...');
     const headToHead = calculateHeadToHeadRecords(reports);
-    
+
     // Combine all data
     const leagueData = {
       seasons,
@@ -336,10 +336,10 @@ async function main() {
     // Write the consolidated data file
     console.log('💾 Writing league data...');
     fs.writeFileSync(OUTPUT_FILE, JSON.stringify(leagueData, null, 2));
-    
+
     console.log('✅ Data pipeline completed successfully!');
     console.log(`📊 Processed: ${leagueData.metadata.totalReports} reports across ${leagueData.metadata.totalSeasons} seasons`);
-    
+
     // Show sample data
     for (const [year, season] of Object.entries(seasons)) {
       console.log(`🏆 ${year} Final Standings:`);
@@ -347,10 +347,10 @@ async function main() {
         console.log(`   ${team.rank}. ${team.team} (${team.wins}-${team.losses}, ${team.winPercentage}%)`);
       });
     }
-    
+
     console.log(`📄 Output: ${OUTPUT_FILE}`);
     console.log('🎯 Ready for Astro site generation!');
-    
+
   } catch (error) {
     console.error('❌ Error in data pipeline:', error);
     process.exit(1);

@@ -1,8 +1,0 @@
-Metadata-Version: 2.4
-Name: ff
-Version: 0.1.0
-Summary: Sleeper weekly reports (modular)
-Requires-Python: >=3.11
-License-File: LICENSE
-Requires-Dist: requests>=2.32.0
-Dynamic: license-file

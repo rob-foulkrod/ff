@@ -1,8 +1,3 @@
-"""Compute utilities for fantasy football reporting.
-
-Re-exports public functions from ``core`` for convenience.
-"""
-
 from . import core
 
 group_rows = core.group_rows
@@ -12,9 +7,9 @@ current_streak = core.current_streak
 longest_streaks = core.longest_streaks
 
 __all__ = [
-	"group_rows",
-	"compute_standings_with_groups",
-	"compute_weekly_results",
-	"current_streak",
-	"longest_streaks",
+    "group_rows",
+    "compute_standings_with_groups",
+    "compute_weekly_results",
+    "current_streak",
+    "longest_streaks",
 ]

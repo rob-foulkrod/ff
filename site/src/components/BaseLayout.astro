@@ -72,35 +72,35 @@ const familyInfo = {
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
-    
+
   <!-- Open Graph -->
   <meta property="og:title" content={`${title} | Foulk ’n Football`} />
     <meta property="og:description" content={description} />
   <meta property="og:image" content={`${BASE}og-image.png`} />
     <meta property="og:type" content="website" />
-    
+
     <!-- Favicon -->
   <link rel="icon" type="image/png" href={`${BASE}favicon.png`} />
-    
+
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&display=swap" rel="stylesheet">
-    
+
     <!-- Theme CSS -->
   <link rel="stylesheet" href={`${BASE}styles/foulknfootball-theme.css`} />
-    
+
   <title>{title} | Foulk ’n Football</title>
   </head>
   <body>
     <Header />
-    
+
     <main id="main-content">
       <slot />
     </main>
-    
+
     <Footer />
-    
+
     <!-- Back to top button -->
     <button id="back-to-top" class="fff-back-to-top" aria-label="Back to top">
       ↑
@@ -198,7 +198,7 @@ const familyInfo = {
 <script>
   // Back to top button
   const backToTop = document.getElementById('back-to-top');
-  
+
   window.addEventListener('scroll', () => {
     if (window.scrollY > 300) {
       backToTop?.classList.add('visible');
@@ -206,7 +206,7 @@ const familyInfo = {
       backToTop?.classList.remove('visible');
     }
   });
-  
+
   backToTop?.addEventListener('click', () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
   });
