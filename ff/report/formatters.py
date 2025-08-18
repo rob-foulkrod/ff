@@ -81,7 +81,7 @@ def _grid_to_matrix(grid: list[list[Any]]) -> list[dict[str, Any]]:
     roster_ids: list[int] = []
     for cell in header:
         try:
-            rid = int(str(cell).split('-', 1)[0])
+            rid = int(str(cell).split("-", 1)[0])
         except ValueError:
             rid = -1
         roster_ids.append(rid)
@@ -91,13 +91,13 @@ def _grid_to_matrix(grid: list[list[Any]]) -> list[dict[str, Any]]:
             continue
         left = row[0]
         try:
-            row_rid = int(str(left).split('-', 1)[0])
+            row_rid = int(str(left).split("-", 1)[0])
         except ValueError:
             row_rid = -1
         vs_map: dict[str, Any] = {}
         for idx, cell in enumerate(row[1:]):
             opp = roster_ids[idx]
-            if isinstance(cell, str) and cell == '-':
+            if isinstance(cell, str) and cell == "-":
                 continue
             vs_map[str(opp)] = cell
         out.append({"roster_id": row_rid, "vs": vs_map})
@@ -151,7 +151,16 @@ def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
     raw_rows = data.pop("weekly_results_enriched_rows", None)
     if raw_rows:
         header = [
-            "matchup_id","roster_a","points_a","roster_b","points_b","winner_roster_id","winner_owner","loser_owner","tie","details"
+            "matchup_id",
+            "roster_a",
+            "points_a",
+            "roster_b",
+            "points_b",
+            "winner_roster_id",
+            "winner_owner",
+            "loser_owner",
+            "tie",
+            "details",
         ]
         normalized_rows: list[dict[str, Any]] = []
         for r in raw_rows:
@@ -161,7 +170,7 @@ def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
             obj["details_flags"] = details_flags
             obj["details_kv"] = details_kv
             # numeric coercion
-            for fld in ("matchup_id","points_a","points_b"):
+            for fld in ("matchup_id", "points_a", "points_b"):
                 obj[fld] = _coerce_number(obj.get(fld))
             if isinstance(obj.get("winner_roster_id"), str) and obj["winner_roster_id"].isdigit():
                 obj["winner_roster_id"] = int(obj["winner_roster_id"])
@@ -172,12 +181,26 @@ def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
     streak_rows = data.pop("streaks_table", None)
     if streak_rows:
         header = [
-            "roster_id","owner","current_streak","current_start_week","current_end_week","longest_win_len","longest_win_span","longest_loss_len","longest_loss_span"
+            "roster_id",
+            "owner",
+            "current_streak",
+            "current_start_week",
+            "current_end_week",
+            "longest_win_len",
+            "longest_win_span",
+            "longest_loss_len",
+            "longest_loss_span",
         ]
         streak_objs = []
         for r in streak_rows:
             obj = {header[i]: r[i] for i in range(min(len(header), len(r)))}
-            for fld in ("roster_id","current_start_week","current_end_week","longest_win_len","longest_loss_len"):
+            for fld in (
+                "roster_id",
+                "current_start_week",
+                "current_end_week",
+                "longest_win_len",
+                "longest_loss_len",
+            ):
                 try:
                     obj[fld] = int(obj[fld]) if obj[fld] not in {"-", None} else None
                 except Exception:
@@ -197,7 +220,17 @@ def _normalize_payload(payload: dict[str, Any]) -> dict[str, Any]:
                     ms[key + "_obj"] = parsed
     # Sections index
     optional_keys = [
-        "weekly_results_enriched","streaks","head_to_head_matrix","all_play_records","median_records","margin_summary","division_power_week","division_power_season","playoff_standings","division_standings","roster_directory"
+        "weekly_results_enriched",
+        "streaks",
+        "head_to_head_matrix",
+        "all_play_records",
+        "median_records",
+        "margin_summary",
+        "division_power_week",
+        "division_power_season",
+        "playoff_standings",
+        "division_standings",
+        "roster_directory",
     ]
     data["sections"] = [k for k in optional_keys if k in data and data[k]]
     return data

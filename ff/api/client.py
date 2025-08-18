@@ -7,10 +7,14 @@ from ff.report.constants import DEFAULT_MIN_INTERVAL_SEC
 from requests.adapters import HTTPAdapter
 from urllib3.util.retry import Retry
 
+
 class RateLimiter:
     def __init__(self, min_interval_sec: float | None = None) -> None:
-        self.min_interval = float(min_interval_sec) if min_interval_sec else DEFAULT_MIN_INTERVAL_SEC
+        self.min_interval = (
+            float(min_interval_sec) if min_interval_sec else DEFAULT_MIN_INTERVAL_SEC
+        )
         self._last = 0.0
+
     def wait(self) -> None:
         now = time.monotonic()
         if self._last:
@@ -19,8 +23,14 @@ class RateLimiter:
                 time.sleep(self.min_interval - elapsed)
         self._last = time.monotonic()
 
+
 class SleeperClient:
-    def __init__(self, base_url: str | None = None, rpm_limit: float | None = None, min_interval_ms: float | None = None) -> None:
+    def __init__(
+        self,
+        base_url: str | None = None,
+        rpm_limit: float | None = None,
+        min_interval_ms: float | None = None,
+    ) -> None:
         self.base_url = base_url or os.environ.get("SLEEPER_BASE_URL", "https://api.sleeper.com/v1")
         min_interval = None
         if rpm_limit and rpm_limit > 0:
@@ -31,10 +41,19 @@ class SleeperClient:
         self.rate = RateLimiter(min_interval)
         self.session = requests.Session()
         self.session.headers.update({"User-Agent": "ff-weekly-report/1.0"})
-        retry = Retry(total=5, connect=3, read=3, backoff_factor=0.5, status_forcelist=(408,429,500,502,503,504), allowed_methods=("GET",), raise_on_status=False)
+        retry = Retry(
+            total=5,
+            connect=3,
+            read=3,
+            backoff_factor=0.5,
+            status_forcelist=(408, 429, 500, 502, 503, 504),
+            allowed_methods=("GET",),
+            raise_on_status=False,
+        )
         adapter = HTTPAdapter(max_retries=retry)
         self.session.mount("http://", adapter)
         self.session.mount("https://", adapter)
+
     def get_json(self, path: str) -> Any:
         self.rate.wait()
         r = self.session.get(self.base_url + path, timeout=20)

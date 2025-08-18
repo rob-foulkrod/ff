@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+
 def _coerce_int(value: object, default: int = 0) -> int:
     """Best‑effort int conversion (supports int, float, str of digits)."""
     if value is None:
@@ -15,6 +16,7 @@ def _coerce_int(value: object, default: int = 0) -> int:
             return default
     return default
 
+
 def group_rows(rows: list[dict]) -> dict[int, list[dict]]:
     groups: dict[int, list[dict]] = {}
     for row in rows or []:
@@ -28,7 +30,10 @@ def group_rows(rows: list[dict]) -> dict[int, list[dict]]:
         groups.setdefault(mid, []).append(row)
     return groups
 
-def compute_standings_with_groups(weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int) -> list[dict]:
+
+def compute_standings_with_groups(
+    weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int
+) -> list[dict]:
     records: dict[int, dict] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         groups = weekly_groups.get(wk, {})
@@ -41,7 +46,17 @@ def compute_standings_with_groups(weekly_groups: dict[int, dict[int, list[dict]]
                         # Skip malformed entry without roster id
                         continue
                     rid = _coerce_int(rid_raw, -1)
-                    rec = records.setdefault(rid, {"roster_id": rid, "wins": 0, "losses": 0, "ties": 0, "points_for": 0.0, "points_against": 0.0})
+                    rec = records.setdefault(
+                        rid,
+                        {
+                            "roster_id": rid,
+                            "wins": 0,
+                            "losses": 0,
+                            "ties": 0,
+                            "points_for": 0.0,
+                            "points_against": 0.0,
+                        },
+                    )
                     opp = b if e is a else a
                     rec["points_for"] += float(e.get("points", 0) or 0)
                     rec["points_against"] += float(opp.get("points", 0) or 0)
@@ -70,18 +85,39 @@ def compute_standings_with_groups(weekly_groups: dict[int, dict[int, list[dict]]
                     if rid_raw is None:
                         continue
                     rid = _coerce_int(rid_raw, -1)
-                    rec = records.setdefault(rid, {"roster_id": rid, "wins": 0, "losses": 0, "ties": 0, "points_for": 0.0, "points_against": 0.0})
+                    rec = records.setdefault(
+                        rid,
+                        {
+                            "roster_id": rid,
+                            "wins": 0,
+                            "losses": 0,
+                            "ties": 0,
+                            "points_for": 0.0,
+                            "points_against": 0.0,
+                        },
+                    )
                     rec["points_for"] += total_points[i]
                     rec["points_against"] += sum(total_points) - total_points[i]
     table = []
     for rid, rec in records.items():
         g = rec["wins"] + rec["losses"] + rec["ties"]
         win_pct = (rec["wins"] + 0.5 * rec["ties"]) / g if g else 0.0
-        table.append({**rec, "games": g, "win_pct": round(win_pct, 4), "points_for": round(rec["points_for"], 2), "points_against": round(rec["points_against"], 2)})
+        table.append(
+            {
+                **rec,
+                "games": g,
+                "win_pct": round(win_pct, 4),
+                "points_for": round(rec["points_for"], 2),
+                "points_against": round(rec["points_against"], 2),
+            }
+        )
     table.sort(key=lambda r: (-r["win_pct"], -r["points_for"], r["roster_id"]))
     return table
 
-def compute_weekly_results(weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int) -> dict[int, list[tuple[int, str]]]:
+
+def compute_weekly_results(
+    weekly_groups: dict[int, dict[int, list[dict]]], start_week: int, end_week: int
+) -> dict[int, list[tuple[int, str]]]:
     results: dict[int, list[tuple[int, str]]] = {}
     for wk in range(start_week, max(start_week, end_week) + 1):
         groups = weekly_groups.get(wk, {})
@@ -108,6 +144,7 @@ def compute_weekly_results(weekly_groups: dict[int, dict[int, list[dict]]], star
                 results.setdefault(b_rid, []).append((wk, "T"))
     return results
 
+
 def current_streak(res_list: list[tuple[int, str]], through_week: int) -> tuple[str, int, int, int]:
     filtered = [t for t in res_list if t[0] <= through_week]
     if not filtered:
@@ -131,7 +168,10 @@ def current_streak(res_list: list[tuple[int, str]], through_week: int) -> tuple[
         return ("none", 0, 0, through_week)
     return (streak_type, length, start_wk, through_week)
 
-def longest_streaks(res_list: list[tuple[int, str]], through_week: int) -> tuple[tuple[int, str], tuple[int, str]]:
+
+def longest_streaks(
+    res_list: list[tuple[int, str]], through_week: int
+) -> tuple[tuple[int, str], tuple[int, str]]:
     filtered = [t for t in res_list if t[0] <= through_week]
     best_win = (0, "-")
     best_loss = (0, "-")

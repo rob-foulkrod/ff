@@ -1,4 +1,5 @@
 """Collection & assembly for modular weekly report generation (new package)."""
+
 from __future__ import annotations
 
 import os
@@ -543,10 +544,7 @@ def build_weekly_context(
                 flags.append("blowout=yes")
             if margin <= NAIL_BITER_MARGIN:
                 flags.append("nail_biter=yes")
-            if (
-                winner_points - loser_points <= CLOSE_GAME_MARGIN
-                and margin > NAIL_BITER_MARGIN
-            ):
+            if winner_points - loser_points <= CLOSE_GAME_MARGIN and margin > NAIL_BITER_MARGIN:
                 flags.append("close_game=yes")
         if total >= SHOOTOUT_COMBINED:
             flags.append("shootout=yes")
@@ -559,8 +557,7 @@ def build_weekly_context(
         if (
             winner_id
             and loser_id
-            and prior_win_pct.get(int(winner_id), 0)
-            < prior_win_pct.get(int(loser_id), 0)
+            and prior_win_pct.get(int(winner_id), 0) < prior_win_pct.get(int(loser_id), 0)
         ):
             flags.append("upset=yes")
         if winner_points == week_high_points:
@@ -569,14 +566,18 @@ def build_weekly_context(
             flags.append("bad_beat=yes")
         if winner_id:
             seq_w = weekly_results_all.get(int(winner_id), [])
-            ctype_w, clen_w, *_ = _compute_current_streak(seq_w, report_week) if seq_w else (None, 0, None, None)
+            ctype_w, clen_w, *_ = (
+                _compute_current_streak(seq_w, report_week) if seq_w else (None, 0, None, None)
+            )
             if ctype_w == "W" and clen_w >= 4:
                 flags.append(f"extended_win_streak={clen_w}")
         if loser_id:
             seq_l = weekly_results_all.get(int(loser_id), [])
-            ctype_prev, clen_prev, *_ = _compute_current_streak(
-                [t for t in seq_l if t[0] < report_week], report_week - 1
-            ) if seq_l else (None, 0, None, None)
+            ctype_prev, clen_prev, *_ = (
+                _compute_current_streak([t for t in seq_l if t[0] < report_week], report_week - 1)
+                if seq_l
+                else (None, 0, None, None)
+            )
             if ctype_prev == "W" and clen_prev >= 2 and not tie:
                 flags.append("broke_opponent_streak=yes")
                 flags.append(f"opponent_prev_streak_type={ctype_prev}")
@@ -646,7 +647,9 @@ def build_weekly_context(
             matrix[key] = cur
     # Build grid lines
     h2h_grid: list[list[str]] = []
-    header = [""] + [f"{rid}-{roster_owner_name.get(rid, 'Roster '+str(rid))}" for rid in roster_ids_sorted]
+    header = [""] + [
+        f"{rid}-{roster_owner_name.get(rid, 'Roster '+str(rid))}" for rid in roster_ids_sorted
+    ]
     h2h_grid.append(header)
     for rid_a in roster_ids_sorted:
         row = [f"{rid_a}-{roster_owner_name.get(rid_a, 'Roster '+str(rid_a))}"]
@@ -677,8 +680,12 @@ def build_weekly_context(
                     continue
                 wk_points[rid] = float(e.get("points", 0) or 0.0)
         week_team_points[wk] = wk_points
-    cumulative_all_play: dict[int, dict[str, float]] = {rid: {"w": 0.0, "l": 0.0} for rid in roster_ids}
-    cumulative_median: dict[int, dict[str, float]] = {rid: {"w": 0.0, "l": 0.0} for rid in roster_ids}
+    cumulative_all_play: dict[int, dict[str, float]] = {
+        rid: {"w": 0.0, "l": 0.0} for rid in roster_ids
+    }
+    cumulative_median: dict[int, dict[str, float]] = {
+        rid: {"w": 0.0, "l": 0.0} for rid in roster_ids
+    }
     for wk, pts_map in week_team_points.items():
         if not pts_map:
             continue
@@ -725,23 +732,28 @@ def build_weekly_context(
         med_w = cumulative_median[rid]["w"]
         med_l = cumulative_median[rid]["l"]
         med_pct = (med_w / (med_w + med_l)) if (med_w + med_l) > 0 else 0.0
-        all_play_records.append({
-            "roster_id": rid,
-            "owner": team_names_map.get(rid),
-            "all_play_w": round(ap_w, 2),
-            "all_play_l": round(ap_l, 2),
-            "all_play_pct": round(ap_pct, 4),
-            "expected_wins": round(expected_wins, 2),
-            "actual_wins": actual_wins_map.get(rid, 0.0),
-            "luck_diff": round(luck_diff, 2),
-        })
-        median_records.append({
-            "roster_id": rid,
-            "owner": team_names_map.get(rid),
-            "median_w": round(med_w, 2),
-            "median_l": round(med_l, 2),
-            "median_pct": round(med_pct, 4),
-        })
+        all_play_records.append(
+            {
+                "roster_id": rid,
+                "owner": team_names_map.get(rid),
+                "all_play_w": round(ap_w, 2),
+                "all_play_l": round(ap_l, 2),
+                "all_play_pct": round(ap_pct, 4),
+                "expected_wins": round(expected_wins, 2),
+                "actual_wins": actual_wins_map.get(rid, 0.0),
+                "luck_diff": round(luck_diff, 2),
+            }
+        )
+        median_records.append(
+            {
+                "roster_id": rid,
+                "owner": team_names_map.get(rid),
+                "median_w": round(med_w, 2),
+                "median_l": round(med_l, 2),
+                "median_pct": round(med_pct, 4),
+            }
+        )
+
     def _matchup_margins_through(wk_end: int) -> list[float]:
         vals: list[float] = []
         for wk in range(start_week, wk_end + 1):
@@ -753,6 +765,7 @@ def build_weekly_context(
                 bp = float(b.get("points", 0) or 0)
                 vals.append(abs(ap - bp))
         return vals
+
     # Build detailed matchup margin records to allow structured extremes
     matchup_margin_details: list[dict] = []
     for wk in range(start_week, report_week + 1):
@@ -771,18 +784,21 @@ def build_weekly_context(
             else:
                 winner, loser = a_i, b_i
                 winner_pts, loser_pts = ap_i, bp_i
-            matchup_margin_details.append({
-                "week": wk,
-                "matchup_id": mid,
-                "margin": round(abs(ap_i - bp_i), 2),
-                "winner_id": winner.get("roster_id"),
-                "loser_id": loser.get("roster_id"),
-                "winner_owner": roster_owner_name.get(winner.get("roster_id")),
-                "loser_owner": roster_owner_name.get(loser.get("roster_id")),
-                "winner_points": winner_pts,
-                "loser_points": loser_pts,
-                "tie": ap_i == bp_i,
-            })
+            matchup_margin_details.append(
+                {
+                    "week": wk,
+                    "matchup_id": mid,
+                    "margin": round(abs(ap_i - bp_i), 2),
+                    "winner_id": winner.get("roster_id"),
+                    "loser_id": loser.get("roster_id"),
+                    "winner_owner": roster_owner_name.get(winner.get("roster_id")),
+                    "loser_owner": roster_owner_name.get(loser.get("roster_id")),
+                    "winner_points": winner_pts,
+                    "loser_points": loser_pts,
+                    "tie": ap_i == bp_i,
+                }
+            )
+
     def _convert_game(d: dict) -> dict:
         return {
             "week": d["week"],
@@ -800,6 +816,7 @@ def build_weekly_context(
                 "points": d.get("loser_points"),
             },
         }
+
     margin_summary: dict[str, dict] = {}
     # Weekly extremes
     week_games = [d for d in matchup_margin_details if d["week"] == report_week]
@@ -819,22 +836,22 @@ def build_weekly_context(
             "largest": _convert_game(largest_season),
             "smallest": _convert_game(smallest_season),
             "average_margin": round(
-                 sum(g["margin"] for g in matchup_margin_details) / len(matchup_margin_details), 2
+                sum(g["margin"] for g in matchup_margin_details) / len(matchup_margin_details), 2
             ),
         }
     division_power_week: list[dict] = []
     division_power_season: list[dict] = []
     if division_count_active > 0:
         wk_pts_map = week_team_points.get(report_week, {})
-        week_wl: dict[int, dict[str,int]] = {rid: {"w":0,"l":0} for rid in roster_ids}
+        week_wl: dict[int, dict[str, int]] = {rid: {"w": 0, "l": 0} for rid in roster_ids}
         for _, entries in (weekly_groups.get(report_week, {}) or {}).items():
             if len(entries) != 2:
                 continue
             a, b = entries
             aid = int(a.get("roster_id"))
             bid = int(b.get("roster_id"))
-            ap = float(a.get("points",0) or 0)
-            bp = float(b.get("points",0) or 0)
+            ap = float(a.get("points", 0) or 0)
+            bp = float(b.get("points", 0) or 0)
             if ap > bp:
                 week_wl[aid]["w"] += 1
                 week_wl[bid]["l"] += 1
@@ -850,15 +867,19 @@ def build_weekly_context(
             member_pts = [wk_pts_map.get(rid, 0.0) for rid in members]
             w = sum(week_wl[rid]["w"] for rid in members)
             l = sum(week_wl[rid]["l"] for rid in members)
-            division_power_week.append({
-                "division_id": div,
-                "division_name": division_names.get(div, f"Division {div}"),
-                "team_count": len(members),
-                "week_points_total": round(sum(member_pts),2),
-                "week_points_avg": round(sum(member_pts)/len(member_pts),2) if member_pts else 0.0,
-                "week_wins": w,
-                "week_losses": l,
-            })
+            division_power_week.append(
+                {
+                    "division_id": div,
+                    "division_name": division_names.get(div, f"Division {div}"),
+                    "team_count": len(members),
+                    "week_points_total": round(sum(member_pts), 2),
+                    "week_points_avg": (
+                        round(sum(member_pts) / len(member_pts), 2) if member_pts else 0.0
+                    ),
+                    "week_wins": w,
+                    "week_losses": l,
+                }
+            )
         by_div_season: dict[int, list[dict]] = {}
         for rec in standings:
             try:
@@ -875,19 +896,21 @@ def build_weekly_context(
             total_l = sum(int(r.get("losses") or 0) for r in rows)
             total_t = sum(int(r.get("ties") or 0) for r in rows)
             games = (total_w + total_l + total_t) / max(1, len(rows))
-            division_power_season.append({
-                "division_id": div,
-                "division_name": division_names.get(div, f"Division {div}"),
-                "team_count": len(rows),
-                "season_points_for": round(total_pf,2),
-                "season_points_against": round(total_pa,2),
-                "pf_per_team_pg": round((total_pf/len(rows))/games,2) if games else 0.0,
-                "pa_per_team_pg": round((total_pa/len(rows))/games,2) if games else 0.0,
-                "agg_wins": total_w,
-                "agg_losses": total_l,
-                "agg_ties": total_t,
-                "agg_win_pct": round(total_w / max(1, (total_w+total_l+total_t)),4),
-            })
+            division_power_season.append(
+                {
+                    "division_id": div,
+                    "division_name": division_names.get(div, f"Division {div}"),
+                    "team_count": len(rows),
+                    "season_points_for": round(total_pf, 2),
+                    "season_points_against": round(total_pa, 2),
+                    "pf_per_team_pg": round((total_pf / len(rows)) / games, 2) if games else 0.0,
+                    "pa_per_team_pg": round((total_pa / len(rows)) / games, 2) if games else 0.0,
+                    "agg_wins": total_w,
+                    "agg_losses": total_l,
+                    "agg_ties": total_t,
+                    "agg_win_pct": round(total_w / max(1, (total_w + total_l + total_t)), 4),
+                }
+            )
     enhancements_md: list[str] = []
     # Build consolidated per-team summary now that we have all derived metrics
     teams_summary: list[dict] = []
@@ -896,11 +919,7 @@ def build_weekly_context(
             "roster_id": rid,
             "owner": team_names_map.get(rid),
             "division_id": next(
-                (
-                    rd.get("division_id")
-                    for rd in roster_directory
-                    if rd.get("roster_id") == rid
-                ),
+                (rd.get("division_id") for rd in roster_directory if rd.get("roster_id") == rid),
                 None,
             ),
             "all_play_w": (
@@ -953,11 +972,7 @@ def build_weekly_context(
             ),
             "expected_wins": (
                 next(
-                    (
-                        r["expected_wins"]
-                        for r in all_play_records
-                        if r["roster_id"] == rid
-                    ),
+                    (r["expected_wins"] for r in all_play_records if r["roster_id"] == rid),
                     None,
                 )
                 if all_play_records
@@ -965,11 +980,7 @@ def build_weekly_context(
             ),
             "actual_wins": (
                 next(
-                    (
-                        r["actual_wins"]
-                        for r in all_play_records
-                        if r["roster_id"] == rid
-                    ),
+                    (r["actual_wins"] for r in all_play_records if r["roster_id"] == rid),
                     None,
                 )
                 if all_play_records
@@ -977,11 +988,7 @@ def build_weekly_context(
             ),
             "luck_diff": (
                 next(
-                    (
-                        r["luck_diff"]
-                        for r in all_play_records
-                        if r["roster_id"] == rid
-                    ),
+                    (r["luck_diff"] for r in all_play_records if r["roster_id"] == rid),
                     None,
                 )
                 if all_play_records
@@ -1014,23 +1021,13 @@ def build_weekly_context(
                     f"{r['all_play_pct']:.4f}",
                     *(
                         lambda _rid: [
-                            next(
-                                m["median_w"]
-                                for m in median_records
-                                if m["roster_id"] == _rid
-                            ),
-                            next(
-                                m["median_l"]
-                                for m in median_records
-                                if m["roster_id"] == _rid
-                            ),
-                            (
-                                lambda _mp: f"{_mp:.4f}"
-                            )(
+                            next(m["median_w"] for m in median_records if m["roster_id"] == _rid),
+                            next(m["median_l"] for m in median_records if m["roster_id"] == _rid),
+                            (lambda _mp: f"{_mp:.4f}")(
                                 next(
-                                    m['median_pct']
+                                    m["median_pct"]
                                     for m in median_records
-                                    if m['roster_id'] == _rid
+                                    if m["roster_id"] == _rid
                                 )
                             ),
                         ]
@@ -1053,16 +1050,18 @@ def build_weekly_context(
                 g = week_part.get(label)
                 if not g:
                     continue
-                week_rows.append([
-                    label,
-                    g["winner"].get("owner"),
-                    g["loser"].get("owner"),
-                    f"{g['winner'].get('points'):.2f}",
-                    f"{g['loser'].get('points'):.2f}",
-                    f"{g['margin']:.2f}",
-                    g["matchup_id"],
-                    g["week"],
-                ])
+                week_rows.append(
+                    [
+                        label,
+                        g["winner"].get("owner"),
+                        g["loser"].get("owner"),
+                        f"{g['winner'].get('points'):.2f}",
+                        f"{g['loser'].get('points'):.2f}",
+                        f"{g['margin']:.2f}",
+                        g["matchup_id"],
+                        g["week"],
+                    ]
+                )
             enhancements_md += _md_table(
                 [
                     "type",
@@ -1088,16 +1087,18 @@ def build_weekly_context(
                 g = season_part.get(label)
                 if not g:
                     continue
-                season_rows.append([
-                    label,
-                    g["winner"].get("owner"),
-                    g["loser"].get("owner"),
-                    f"{g['winner'].get('points'):.2f}",
-                    f"{g['loser'].get('points'):.2f}",
-                    f"{g['margin']:.2f}",
-                    g["matchup_id"],
-                    g["week"],
-                ])
+                season_rows.append(
+                    [
+                        label,
+                        g["winner"].get("owner"),
+                        g["loser"].get("owner"),
+                        f"{g['winner'].get('points'):.2f}",
+                        f"{g['loser'].get('points'):.2f}",
+                        f"{g['margin']:.2f}",
+                        g["matchup_id"],
+                        g["week"],
+                    ]
+                )
             enhancements_md += _md_table(
                 [
                     "type",
@@ -1226,7 +1227,11 @@ def build_weekly_context(
             mid = row[0]
             details_idx = 9
             if row[details_idx] != "-":
-                details = [c.strip() for c in row[details_idx].replace('<br>','; ').split(";") if c.strip()]
+                details = [
+                    c.strip()
+                    for c in row[details_idx].replace("<br>", "; ").split(";")
+                    if c.strip()
+                ]
             else:
                 details = []
             if str(highest_loser[0]) == mid:
@@ -1278,7 +1283,9 @@ def build_weekly_context(
             diff = pf - pa
             # current streak
             seq = weekly_results_all.get(rid)
-            ctype, clen, *_ = _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
+            ctype, clen, *_ = (
+                _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
+            )
             if ctype == "W":
                 cur_streak = f"W{clen}"
             elif ctype == "L":
@@ -1348,7 +1355,9 @@ def build_weekly_context(
                 ties = rec.get("ties")
                 gp = (wins or 0) + (losses or 0) + (ties or 0)
                 seq = weekly_results_all.get(int(rid), [])
-                ctype, clen, *_ = _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
+                ctype, clen, *_ = (
+                    _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
+                )
                 if ctype == "W":
                     cur_streak = f"W{clen}"
                 elif ctype == "L":
@@ -1371,7 +1380,19 @@ def build_weekly_context(
                     ]
                 )
             md_lines += _md_table(
-                ["rank", "roster_id", "owner", "W", "L", "T", "win_pct", "PF", "PA", "games", "current_streak"],
+                [
+                    "rank",
+                    "roster_id",
+                    "owner",
+                    "W",
+                    "L",
+                    "T",
+                    "win_pct",
+                    "PF",
+                    "PA",
+                    "games",
+                    "current_streak",
+                ],
                 div_rows,
             ) + [""]
 
@@ -1392,23 +1413,27 @@ def build_weekly_context(
             ties = rec.get("ties")
             gp = wins + losses + ties
             seq = weekly_results_all.get(rid, [])
-            ctype, clen, *_ = _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
-            cur_streak = f"{ctype}{clen}" if ctype in {"W","L"} else "-"
-            po_rows.append([
-                rec.get("seed"),
-                rid,
-                roster_owner_name.get(rid, f"Roster {rid}"),
-                rec.get("division"),
-                rec.get("type"),
-                wins,
-                losses,
-                ties,
-                f"{rec.get('win_pct'):.{WIN_PCT_PLACES}f}",
-                f"{float(rec.get('points_for')):.{POINTS_PLACES}f}",
-                f"{float(rec.get('points_against')):.{POINTS_PLACES}f}",
-                gp,
-                cur_streak,
-            ])
+            ctype, clen, *_ = (
+                _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
+            )
+            cur_streak = f"{ctype}{clen}" if ctype in {"W", "L"} else "-"
+            po_rows.append(
+                [
+                    rec.get("seed"),
+                    rid,
+                    roster_owner_name.get(rid, f"Roster {rid}"),
+                    rec.get("division"),
+                    rec.get("type"),
+                    wins,
+                    losses,
+                    ties,
+                    f"{rec.get('win_pct'):.{WIN_PCT_PLACES}f}",
+                    f"{float(rec.get('points_for')):.{POINTS_PLACES}f}",
+                    f"{float(rec.get('points_against')):.{POINTS_PLACES}f}",
+                    gp,
+                    cur_streak,
+                ]
+            )
         if first_out:
             rid = int(first_out.get("roster_id"))
             wins = first_out.get("wins")
@@ -1416,26 +1441,44 @@ def build_weekly_context(
             ties = first_out.get("ties")
             gp = wins + losses + ties
             seq = weekly_results_all.get(rid, [])
-            ctype, clen, *_ = _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
-            cur_streak = f"{ctype}{clen}" if ctype in {"W","L"} else "-"
+            ctype, clen, *_ = (
+                _compute_current_streak(seq, report_week) if seq else (None, 0, None, None)
+            )
+            cur_streak = f"{ctype}{clen}" if ctype in {"W", "L"} else "-"
             div = roster_division.get(rid)
-            po_rows.append([
-                "-",
-                rid,
-                roster_owner_name.get(rid, f"Roster {rid}"),
-                division_names.get(div, f"Division {div}") if div else "-",
-                "In the Hunt",
-                wins,
-                losses,
-                ties,
-                f"{first_out.get('win_pct'):.{WIN_PCT_PLACES}f}",
-                f"{float(first_out.get('points_for')):.{POINTS_PLACES}f}",
-                f"{float(first_out.get('points_against')):.{POINTS_PLACES}f}",
-                gp,
-                cur_streak,
-            ])
+            po_rows.append(
+                [
+                    "-",
+                    rid,
+                    roster_owner_name.get(rid, f"Roster {rid}"),
+                    division_names.get(div, f"Division {div}") if div else "-",
+                    "In the Hunt",
+                    wins,
+                    losses,
+                    ties,
+                    f"{first_out.get('win_pct'):.{WIN_PCT_PLACES}f}",
+                    f"{float(first_out.get('points_for')):.{POINTS_PLACES}f}",
+                    f"{float(first_out.get('points_against')):.{POINTS_PLACES}f}",
+                    gp,
+                    cur_streak,
+                ]
+            )
         md_lines += _md_table(
-            ["seed","roster_id","owner","division","type","W","L","T","win_pct","PF","PA","games","current_streak"],
+            [
+                "seed",
+                "roster_id",
+                "owner",
+                "division",
+                "type",
+                "W",
+                "L",
+                "T",
+                "win_pct",
+                "PF",
+                "PA",
+                "games",
+                "current_streak",
+            ],
             po_rows,
         ) + [""]
 
@@ -1457,13 +1500,17 @@ def build_weekly_context(
             ro = m.get("rosters") or []
             a = ro[0] if len(ro) > 0 else {}
             b = ro[1] if len(ro) > 1 else {}
-            preview_rows.append([
-                str(m.get("matchup_id")),
-                f"{a.get('roster_id')}-{a.get('owner')}" if a else "-",
-                f"{b.get('roster_id')}-{b.get('owner')}" if b else "-",
-                "-",
-            ])
-        md_lines += _md_table(["matchup_id","roster_a","roster_b","details"], preview_rows) + [""]
+            preview_rows.append(
+                [
+                    str(m.get("matchup_id")),
+                    f"{a.get('roster_id')}-{a.get('owner')}" if a else "-",
+                    f"{b.get('roster_id')}-{b.get('owner')}" if b else "-",
+                    "-",
+                ]
+            )
+        md_lines += _md_table(["matchup_id", "roster_a", "roster_b", "details"], preview_rows) + [
+            ""
+        ]
 
     # Streaks
     if streak_rows:
@@ -1546,5 +1593,6 @@ def build_weekly_context(
         division_power_week=division_power_week,
         division_power_season=division_power_season,
     )
+
 
 __all__ = ["build_weekly_context", "_resolve_league_for_season"]

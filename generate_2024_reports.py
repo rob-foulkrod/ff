@@ -6,6 +6,7 @@ Usage (from project root, virtualenv active):
 Outputs written under: reports/weekly/2024/week-XX.(md|json)
 Existing files will be overwritten.
 """
+
 from __future__ import annotations
 
 from pathlib import Path
@@ -32,7 +33,9 @@ def main() -> int:
         sport=SPORT,
     )
     last_regular_week = ctx1.playoff_week_start - 1
-    print(f"Detected playoff_week_start={ctx1.playoff_week_start}; generating weeks 1..{last_regular_week}")
+    print(
+        f"Detected playoff_week_start={ctx1.playoff_week_start}; generating weeks 1..{last_regular_week}"
+    )
     for wk in range(1, last_regular_week + 1):
         print(f"Generating week {wk:02d} ...", end="", flush=True)
         ctx = build_weekly_context(
@@ -44,9 +47,7 @@ def main() -> int:
         md_path = OUTPUT_DIR / f"week-{wk:02d}.md"
         json_path = OUTPUT_DIR / f"week-{wk:02d}.json"
         md_path.write_text(format_markdown(ctx), encoding="utf-8")
-        json_path.write_text(
-            format_json(ctx, SCHEMA_VERSION, pretty=True), encoding="utf-8"
-        )
+        json_path.write_text(format_json(ctx, SCHEMA_VERSION, pretty=True), encoding="utf-8")
         print(" done")
     print("All weeks generated.")
     return 0

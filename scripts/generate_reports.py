@@ -17,6 +17,7 @@ Examples:
 
 Exit code is non‑zero if any requested week fails.
 """
+
 from __future__ import annotations
 
 import argparse
@@ -66,19 +67,14 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
     p.add_argument("--sport", default="nfl")
     p.add_argument("--season", required=True, type=int)
     p.add_argument("--week", type=int, help="Single week to generate")
-    p.add_argument(
-        "--weeks", help="Comma separated explicit weeks (e.g., 1,2,5,9)")
+    p.add_argument("--weeks", help="Comma separated explicit weeks (e.g., 1,2,5,9)")
     p.add_argument("--range", dest="range_expr", help="Inclusive week range (e.g., 1-4)")
     p.add_argument("--all", action="store_true", help="All regular season weeks")
     p.add_argument(
         "--out-dir", default="reports/weekly", help="Base output directory (default reports/weekly)"
     )
-    p.add_argument(
-        "--formats", default="markdown", help="Comma separated formats (markdown,json)"
-    )
-    p.add_argument(
-        "--json-compact", action="store_true", help="Emit compact JSON (default pretty)"
-    )
+    p.add_argument("--formats", default="markdown", help="Comma separated formats (markdown,json)")
+    p.add_argument("--json-compact", action="store_true", help="Emit compact JSON (default pretty)")
     p.add_argument("--verbose", action="store_true")
     args = p.parse_args(argv)
 
@@ -117,9 +113,7 @@ def main(argv: list[str] | None = None) -> int:  # pragma: no cover - CLI
             if args.verbose:
                 print(summary)
             else:
-                path_info = ", ".join(
-                    f"{k}:{v['path']}" for k, v in summary["formats"].items()
-                )
+                path_info = ", ".join(f"{k}:{v['path']}" for k, v in summary["formats"].items())
                 print(f"Week {w:02d} -> {path_info}")
         except Exception as e:  # pragma: no cover - robustness (broad for automation surface)
             failures += 1
